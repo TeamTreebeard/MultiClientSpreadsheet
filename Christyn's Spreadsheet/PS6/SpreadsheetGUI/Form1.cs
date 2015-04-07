@@ -21,7 +21,7 @@ namespace SpreadsheetGUI
     public partial class Form1 : Form
     {
         private Spreadsheet sp;
-        private String fileName;
+        private String fileName, IPaddress, name, ssname;
 
         /// <summary>
         /// Creates a new empty spreadsheet
@@ -447,6 +447,19 @@ namespace SpreadsheetGUI
                 }
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void connectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form2 connect_form = new Form2(this);
+            connect_form.Show();
+        }
+
+        public void connection_settings(string IP, string client_name, string ss_name)
+        {
+            IPaddress = IP;
+            name = client_name;
+            ssname = ss_name;
         }
     }
 }
