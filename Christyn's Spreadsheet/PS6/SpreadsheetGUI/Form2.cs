@@ -13,7 +13,7 @@ namespace SpreadsheetGUI
     public partial class Form2 : Form
     {
         private Form1 last_form;
-        private string IPaddress, name, ssname;
+        private string IPaddress, name, ssname, port;
 
         public Form2()
         {
@@ -24,6 +24,7 @@ namespace SpreadsheetGUI
         {
             last_form = _form;
             InitializeComponent();
+            textBox4.Text = "2000";
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -31,7 +32,8 @@ namespace SpreadsheetGUI
             IPaddress = textBox1.Text;
             name = textBox2.Text;
             ssname = textBox3.Text;
-            last_form.connection_settings(IPaddress, name, ssname);
+            port = textBox4.Text;
+            last_form.connection_settings(IPaddress, name, ssname, port);
             this.Close();
         }
     }

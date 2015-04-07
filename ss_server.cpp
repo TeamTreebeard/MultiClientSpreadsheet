@@ -49,22 +49,26 @@ int main(int argc, char *argv[])
 	 cout<<"Listeninggggggggg"<<endl;
      clilen = sizeof(cli_addr);
 	 cout<<"boop1"<<endl;
-     newsockfd = accept(sockfd, 
-                 (struct sockaddr *) &cli_addr, 
-                 &clilen);
-	
-	cout<<"boop2"<<endl;
+	 
+	 while(true)
+	 {
+		 newsockfd = accept(sockfd, 
+					 (struct sockaddr *) &cli_addr, 
+					 &clilen);
+		
+		cout<<"boop2"<<endl;
+		 if (newsockfd < 0) 
+			  error("ERROR on accept");
+		 bzero(buffer,256);
+		 cout<<"boop3"<<endl;
 		 
-     if (newsockfd < 0) 
-          error("ERROR on accept");
-     bzero(buffer,256);
-	 cout<<"boop3"<<endl;
-     n = read(newsockfd,buffer,255);
-	 cout<<"boobies"<<endl;
-     if (n < 0) error("ERROR reading from socket");
-     printf("Here is the message: %s\n",buffer);
-     n = write(newsockfd,"I got your message",18);
-     if (n < 0) error("ERROR writing to socket");
+		 n = read(newsockfd,buffer,255);
+		 cout<<"boobies"<<endl;
+		 if (n < 0) error("ERROR reading from socket");
+		 printf("Here is the message: %s\n",buffer);
+		 n = write(newsockfd,"I got your message",18);
+		 if (n < 0) error("ERROR writing to socket");
+	 }
      close(newsockfd);
      close(sockfd);
      return 0; 

@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using SS;
 using SpreadsheetUtilities;
+using System.Net.Sockets;
+using System.Net;
 
 
 // Christyn Phillippi u0636074
@@ -455,11 +457,32 @@ namespace SpreadsheetGUI
             connect_form.Show();
         }
 
-        public void connection_settings(string IP, string client_name, string ss_name)
+        public void connection_settings(string IP, string client_name, string ss_name, string _port)
         {
             IPaddress = IP;
             name = client_name;
             ssname = ss_name;
+            int port = Convert.ToInt32(_port);
+            connect_to_server(IPaddress, name, ssname, port);
+        }
+
+        private void connect_to_server(string IP, string name, string ss_name, int port)
+        {
+            IPAddress ip;
+            if(IPAddress.TryParse(IP, out ip))
+            {
+                IP = Dns.GetHostByAddress(ip).HostName;
+            }
+            TcpClient client = new TcpClient(IP, port);
+            NetworkStream stream = client.GetStream();
+            string connection = "connect " + name + " " + ss_name + "\n";
+            byte[] toSend = ASCIIEncoding.ASCII.GetBytes(connection);
+            stream.Write(toSend, 0, toSend.Length);
+
+            byte[] toRead = new byte[client.ReceiveBufferSize];
+            int bytesRead = stream.Read(toRead, 0, client.ReceiveBufferSize);
+            System.Diagnostics.Debug.Write("Received: " + Encoding.ASCII.GetString(toRead, 0, bytesRead));
+            client.Close();
         }
     }
 }
