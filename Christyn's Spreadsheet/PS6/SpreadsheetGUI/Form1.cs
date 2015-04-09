@@ -182,7 +182,7 @@ namespace SpreadsheetGUI
         }
 
         /// <summary>
-        /// Helper method to convert the row and column of the selected cell to its corresponding cell name
+        /// Helper method to convert  the  cell name to it's corresponding row and column 
         /// </summary>
         /// <returns></returns>
         private void getRowandCol(String s, out int col, out int row)
@@ -347,6 +347,8 @@ namespace SpreadsheetGUI
                //just close
             }
         }
+
+
         /// <summary>
         /// Override to allow arrowkeys to be used in Spreadsheet panel to navigate the cells. Updates the textboxes as it goes.
         /// </summary>
@@ -468,6 +470,8 @@ namespace SpreadsheetGUI
 
         private void connect_to_server(string IP, string name, string ss_name, int port)
         {
+            String received = "";
+            String command = "";
             IPAddress ip;
             if(IPAddress.TryParse(IP, out ip))
             {
@@ -480,9 +484,33 @@ namespace SpreadsheetGUI
             stream.Write(toSend, 0, toSend.Length);
 
             byte[] toRead = new byte[client.ReceiveBufferSize];
+            while (!received.Contains("\n")) { 
             int bytesRead = stream.Read(toRead, 0, client.ReceiveBufferSize);
-            System.Diagnostics.Debug.Write("Received: " + Encoding.ASCII.GetString(toRead, 0, bytesRead));
+            received += Encoding.ASCII.GetString(toRead, 0, bytesRead);
+            }
+            command = received.Substring(0, received.IndexOf("\n"));
+            received = received.Substring(received.IndexOf("\n"));
+
+            if(command.Substring(0, command.IndexOf(" ")) == "connected")
+            {
+
+            }
+            else if(command.Substring(0, command.IndexOf(" ")) == "cell")
+            {
+
+
+            }
+            else if(command.Substring(0, command.IndexOf(" ")) == "error")
+            {
+                
+            }
+
             client.Close();
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("undo bitches");
         }
     }
 }

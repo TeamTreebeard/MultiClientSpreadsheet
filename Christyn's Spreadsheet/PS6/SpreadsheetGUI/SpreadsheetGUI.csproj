@@ -37,10 +37,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Formula, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Resources\Libraries\Formula.dll</HintPath>
-    </Reference>
     <Reference Include="SpreadsheetPanel, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Resources\Libraries\SpreadsheetPanel.dll</HintPath>
@@ -104,9 +100,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Documents\Visual Studio 2013\Projects\PS32\Formula\Formula.csproj">
+      <Project>{cbeb2a78-fba5-4e6a-aa34-783c52ab802f}</Project>
+      <Name>Formula</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Spreadsheet\Spreadsheet.csproj">
       <Project>{56eb475d-a2de-41a1-8206-095089aa8b1b}</Project>
       <Name>Spreadsheet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StringSocket\StringSocket.csproj">
+      <Project>{e1838f9a-bccc-423d-a1c1-f11372af78df}</Project>
+      <Name>StringSocket</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

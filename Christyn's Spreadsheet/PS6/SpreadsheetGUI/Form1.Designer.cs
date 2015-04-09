@@ -44,8 +44,9 @@
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -62,7 +63,7 @@
             // 
             // cellNameBox
             // 
-            this.cellNameBox.Location = new System.Drawing.Point(256, 4);
+            this.cellNameBox.Location = new System.Drawing.Point(290, 4);
             this.cellNameBox.Name = "cellNameBox";
             this.cellNameBox.ReadOnly = true;
             this.cellNameBox.Size = new System.Drawing.Size(100, 20);
@@ -70,7 +71,7 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(422, 4);
+            this.textBox2.Location = new System.Drawing.Point(470, 4);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(100, 20);
@@ -78,7 +79,7 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(610, 4);
+            this.textBox3.Location = new System.Drawing.Point(631, 3);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(100, 20);
             this.textBox3.TabIndex = 6;
@@ -86,7 +87,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(195, 7);
+            this.label1.Location = new System.Drawing.Point(229, 7);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(55, 13);
             this.label1.TabIndex = 7;
@@ -95,7 +96,7 @@
             // valueBox
             // 
             this.valueBox.AutoSize = true;
-            this.valueBox.Location = new System.Drawing.Point(362, 7);
+            this.valueBox.Location = new System.Drawing.Point(396, 7);
             this.valueBox.Name = "valueBox";
             this.valueBox.Size = new System.Drawing.Size(54, 13);
             this.valueBox.TabIndex = 8;
@@ -104,7 +105,7 @@
             // EditContentsBox
             // 
             this.EditContentsBox.AutoSize = true;
-            this.EditContentsBox.Location = new System.Drawing.Point(555, 7);
+            this.EditContentsBox.Location = new System.Drawing.Point(576, 7);
             this.EditContentsBox.Name = "EditContentsBox";
             this.EditContentsBox.Size = new System.Drawing.Size(49, 13);
             this.EditContentsBox.TabIndex = 9;
@@ -112,7 +113,7 @@
             // 
             // evaluate
             // 
-            this.evaluate.Location = new System.Drawing.Point(716, 4);
+            this.evaluate.Location = new System.Drawing.Point(737, 3);
             this.evaluate.Name = "evaluate";
             this.evaluate.Size = new System.Drawing.Size(42, 21);
             this.evaluate.TabIndex = 10;
@@ -171,7 +172,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.helpToolStripMenuItem,
-            this.connectToolStripMenuItem});
+            this.connectToolStripMenuItem,
+            this.undoToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(983, 24);
@@ -184,6 +186,14 @@
             this.connectToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
             this.connectToolStripMenuItem.Text = "Connect";
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
+            // 
+            // undoToolStripMenuItem
+            // 
+            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+            this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.undoToolStripMenuItem.Text = "Undo";
+            this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -230,8 +240,7 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
-
-
+        private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
     }
 }
 
