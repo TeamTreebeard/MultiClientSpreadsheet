@@ -1,5 +1,7 @@
 #include <string>
 #include <vector>
+#include <map>
+#include "DependencyGraph.h"
 
 using namespace std;
 
@@ -7,6 +9,20 @@ class Spreadsheet
 {
 	public:
 
+	/*
+	Default constructor
+	*/
+	Spreadsheet();
+	/*
+	Normal constructor, uses filename to open an existing spreadsheet.
+	If there is no existing spreadsheet with that filename, will create
+	a new spreadsheet using that filename.
+	*/
+	Spreadsheet(string filename);
+	/*
+	Default destructor
+	*/
+	~Spreadsheet();
 	/*
 	If the name is null or invalid, throws an InvalidNameException.
 	Otherwise, returns the value (as opposed to the contents) of the
@@ -105,7 +121,15 @@ class Spreadsheet
 	void Open(string filename);
 
 	private:
-	
+	/*
+	Keeps track of the cells another cell is dependent on. Necessary when updating
+	a Formula to see which of the other cells are also changing.
+	*/
+	DependencyGraph graph;
+	/*
+	Keeps track of non-empty cells, key is name, value is contents
+	*/
+	map<string, string> sheet;
 	/*
 	Helper function for GetCellsToRecalculate that does most all of the actual
 	computation required to return the correct set of cell names.
