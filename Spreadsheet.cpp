@@ -3,17 +3,7 @@
 
 using namespace std;
 
-bool Spreadsheet::IsValid(string word)
-{
-	
-}
-
-string Spreadsheet::Normalize(string word)
-{
-	
-}
-
-string Spreadsheet::GetCellValue(stirng name)
+string Spreadsheet::GetCellValue(string name)
 {
 	
 }
@@ -23,7 +13,7 @@ string Spreadsheet::GetCellContents(string name)
 	
 }
 
-vector<string> Spreadsheet::GetNamesOfAllNonemptyCells();
+vector<string> Spreadsheet::GetNamesOfAllNonemptyCells()
 {
 	
 }
@@ -35,12 +25,13 @@ vector<string> Spreadsheet::SetContentsOfCell (string name, string content)
 
 vector<string> Spreadsheet::GetDirectDependents(string name)
 {
-	
+	return graph.GetDependents(name);
 }
 
 vector<string> Spreadsheet::GetCellsToRecalculate(string name)
 {
-	
+	vector<string> new_list (1,name);
+	return GetCellsToRecalculate(new_list);
 }
 
 void Spreadsheet::Save(string filename)

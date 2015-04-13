@@ -1,10 +1,15 @@
+#include <vector>
+#include <string>
 
+using namespace std;
 
-Class DependencyGraph
+class DependencyGraph
 {
 	public:
 	DependencyGraph();
 	~DependencyGraph();
+	
+	vector<string> GetDependents(string);
 
 	private:
 };
