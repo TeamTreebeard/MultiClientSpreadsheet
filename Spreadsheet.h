@@ -139,5 +139,5 @@ class Spreadsheet
 	Helper function for the GetCellsToRecalculat that keeps track of which cells
 	have been visited already.
 	*/
-	void Visit(string start, string name, vector<string> visited, vector<string> changed);
+	void Visit(string start, string name, vector<string>& visited, vector<string>& changed);
 };
