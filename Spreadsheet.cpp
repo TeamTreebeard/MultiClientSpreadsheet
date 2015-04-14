@@ -4,9 +4,39 @@
 
 using namespace std;
 
+Spreadsheet::Spreadsheet()
+{
+}
+
+struct cell{
+  string name, content;
+};
+
+void Spreadsheet::sendAll(string info)
+{
+    for(int i = 0; i < userList.size(); i++)
+      {
+	
+      }
+}
+
+void Spreadsheet::undo();
+{
+  cell lastChange = undoList.pop()
+  string change = lastChange.name;
+  change += lastChange.content;
+  sendAll(change);
+
+}
+
+void Spreadsheet::adduser(user newUser);
+{
+  userList.push_back(newUser);
+}
+
 string Spreadsheet::GetCellValue(string name)
 {
-	
+  
 }
 
 string Spreadsheet::GetCellContents(string name)
@@ -19,8 +49,22 @@ vector<string> Spreadsheet::GetNamesOfAllNonemptyCells()
 	
 }
 
-vector<string> Spreadsheet::SetContentsOfCell (string name, string content)
+vector<string> Spreadsheet::SetContentsOfCell (string name, string content, boolean isUndo)
 {
+  if(content == null || content == "")
+    {
+    }
+  // else
+
+  if(isUndo == false)
+    {
+      cell newChange;
+      newChange.name = name;
+      newChange.content = content;
+      undoList.push(newChange);
+    }
+
+ 
 	
 }
 

@@ -1,12 +1,19 @@
+#ifndef DEFINE_SPREADSHEET_H
+#define DEFINE_SPREADSHEET_H
+
 #include <string>
 #include <vector>
 #include <map>
+#include <stack>
 #include "DependencyGraph.h"
 
 using namespace std;
 
 class Spreadsheet
 {
+  // Struct containing a cell name and contents
+  struct cell;
+
 	public:
 
 	/*
@@ -29,6 +36,22 @@ class Spreadsheet
 	named cell.
 	*/
 	string GetCellValue(string name);
+
+	/*
+	  Sends the updated cell to all spreadsheet users
+	 */
+	void sendAll(std::string info)
+
+	/* Undoes the last change made to the spreadhsheet and sends it
+           to the users
+	*/
+	void undo();
+
+	/*
+	  Adds a new user to the spreadsheet
+	 */
+	void addUser(user newUser);
+
 	/*
 	If the name is null or invalid, throws an InvalidNameException.
 	Otherwise, returns the contents (as opposed to the value) of the
@@ -66,7 +89,7 @@ class Spreadsheet
 	For example, if name is A1, B1 contains A1*2, and C1 contains B1+A1, the
 	set {A1, B1, C1} is returned.
 	*/
-	vector<string> SetContentsOfCell(string name, string content);
+	vector<string> SetContentsOfCell(string name, string content, boolean isUndo);
 	/*
 	If name is null, throws an ArgumentNull Exception
 	
@@ -140,4 +163,14 @@ class Spreadsheet
 	have been visited already.
 	*/
 	void Visit(string start, string name, vector<string>& visited, vector<string>& changed);
+
+	// Holds all the user changes in the spreadsheet
+	std::stack<cell> undoList; 
+
+	// Holds all the users in the spreadsheet
+	std::vector<user> userList;
 };
+
+
+
+#endif
