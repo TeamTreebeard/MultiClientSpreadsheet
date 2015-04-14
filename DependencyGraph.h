@@ -42,7 +42,8 @@ class DependencyGraph
 	private:
 	
 	int Size;
+	Node* node;
 	map<string,Node> lookup;
-	Node node;
 	vector<string> pivot;
+	bool ContainsKey(string s);
 };

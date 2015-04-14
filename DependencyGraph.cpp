@@ -12,11 +12,33 @@ Node::~Node()
 }
 void Node::AddDependents(string s)
 {
-	dependents.push_back(s);
+	bool exists = false;
+	for(int i = 0; i < dependents.size(); i++)
+	{
+		if (dependents[i] == s)
+		{
+			exists = true;
+		}
+	}
+	if(!exists)
+	{
+		dependents.push_back(s);
+	}
 }
 void Node::AddDependees(string s)
 {
-	dependees.push_back(s);
+	bool exists = false;
+	for(int i = 0; i < dependees.size(); i++)
+	{
+		if (dependees[i] == s)
+		{
+			exists = true;
+		}
+	}
+	if(!exists)
+	{
+		dependees.push_back(s);
+	}
 }
 vector<string> Node::GetDependents()
 {
@@ -85,19 +107,10 @@ int DependencyGraph::get_Size()
 }
 bool DependencyGraph::HasDependents(string s)
 {
-	bool contains_key = false;
-	for(map<string,Node>::iterator it = lookup.begin(); it != lookup.end(); it++)
+	if(ContainsKey(s))
 	{
-		if((it->first) == s)
-		{
-			contains_key = true;
-		}
-	}
-	
-	if(contains_key)
-	{
-		node = lookup[s];
-		return node.HasDependents();
+		node = &lookup[s];
+		return node->HasDependents();
 	}
 	else
 	{
@@ -106,19 +119,10 @@ bool DependencyGraph::HasDependents(string s)
 }
 bool DependencyGraph::HasDependees(string s)
 {
-	bool contains_key = false;
-	for(map<string,Node>::iterator it = lookup.begin(); it != lookup.end(); it++)
+	if(ContainsKey(s))
 	{
-		if((it->first) == s)
-		{
-			contains_key = true;
-		}
-	}
-	
-	if(contains_key)
-	{
-		node = lookup[s];
-		return node.HasDependees();
+		node = &lookup[s];
+		return node->HasDependees();
 	}
 	else
 	{
@@ -127,25 +131,138 @@ bool DependencyGraph::HasDependees(string s)
 }
 vector<string> DependencyGraph::GetDependents(string s)
 {
-	
+	if(ContainsKey(s))
+	{
+		node = &lookup[s];
+		pivot = node->GetDependents();
+		return pivot;
+	}
+	else
+	{
+		vector<string> blank_vector;
+		return blank_vector;
+	}
 }
 vector<string> DependencyGraph::GetDependees(string s)
 {
-	
+	if(ContainsKey(s))
+	{
+		node = &lookup[s];
+		pivot = node->GetDependees();
+		return pivot;
+	}
+	else
+	{
+		vector<string> blank_vector;
+		return blank_vector;
+	}
 }
 void DependencyGraph::AddDependency(string s, string t)
 {
+	//Check to see if cell s exists
+	if(ContainsKey(s))
+	{
+		node = &lookup[s];
+		pivot = node->GetDependents();
+		for(int i = 0; i < pivot.size(); i++)
+		{
+			if(pivot[i] == t)
+			{
+				//if the pairing exists already, don't add it again
+				//this avoids increasing the size falsely
+				return;
+			}
+		}
+	}
+	//If the cell exists but the pairing does not exist, add it
+	node = new Node();
+	node->AddDependents(t);
+	lookup[s] = *node;
+	node = &lookup[s];
+	node->AddDependents(t);
 	
+	//Check to see if the cell t exists and add the pairing
+	if(!ContainsKey(t))
+	{
+		node = new Node();
+		node->AddDependees(s);
+		lookup[t] = *node;
+	}
+	else
+	{
+		node = &lookup[t];
+		node->AddDependees(s);
+	}
+	Size++;
 }
 void DependencyGraph::RemoveDependency(string s, string t)
 {
-	
+	if(ContainsKey(s))
+	{
+		node = &lookup[s];
+		pivot = node->GetDependents();
+		bool found = false;
+		for(int i = 0; i < pivot.size(); i++)
+		{
+			if(pivot[i] == t)
+			{
+				found = true;
+				break;
+			}
+		}	
+		
+		if(found)
+		{
+			node->RemoveDependents(t);
+			node = &lookup[t];
+			node->RemoveDependees(s);
+			Size--;
+		}
+	}
 }
 void DependencyGraph::ReplaceDependents(string s, vector<string> newDependents)
 {
-	
+	if(ContainsKey(s))
+	{
+		node = &lookup[s];
+		pivot = node->GetDependents();
+		vector<string> copy = pivot;
+		for(int i = 0; i < copy.size(); i++)
+		{
+			RemoveDependency(s, copy[i]);
+		}
+		for(int i = 0; i < newDependents.size(); i++)
+		{
+			AddDependency(s, newDependents[i]);
+		}
+	}
 }
 void DependencyGraph::ReplaceDependees(string s, vector<string> newDependees)
 {
-	
+	if(ContainsKey(s))
+	{
+		node = &lookup[s];
+		pivot = node->GetDependees();
+		vector<string> copy = pivot;
+		for(int i = 0; i < copy.size(); i++)
+		{
+			RemoveDependency(s, copy[i]);
+		}
+		for(int i = 0; i < newDependees.size(); i++)
+		{
+			AddDependency(s, newDependees[i]);
+		}
+	}	
+}
+
+bool DependencyGraph::ContainsKey(string s)
+{
+	for(map<string,Node>::iterator it = lookup.begin(); it != lookup.end(); it++)
+	{
+		if((it->first) == s)
+		{
+			return true;
+		}
+	}
+	return false;
 }
