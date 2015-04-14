@@ -12,6 +12,7 @@ using SS;
 using SpreadsheetUtilities;
 using System.Net.Sockets;
 using System.Net;
+using SSModelNS;
 
 
 // Christyn Phillippi u0636074
@@ -24,6 +25,7 @@ namespace SpreadsheetGUI
     {
         private Spreadsheet sp;
         private String fileName, IPaddress, name, ssname;
+        private SSModel model;
 
         /// <summary>
         /// Creates a new empty spreadsheet
@@ -32,12 +34,13 @@ namespace SpreadsheetGUI
         {
             InitializeComponent();
 
+            model = new SSModel();
             sp = new Spreadsheet(isNameValid, t => t.ToUpper(), "ps6");
             fileName = null;
             updateTextDisplays(spreadsheetPanel1);
+
+            model.updateCellEvent += updateCell;
         }
-
-
 
         /// <summary>
         /// Creates a spreadsheet form and populates using a saved spreadsheet.
@@ -110,34 +113,25 @@ namespace SpreadsheetGUI
         private void evaluate_Click(object sender, EventArgs e)
         {
             String name;
-            HashSet<String> evaluateFormula;
-
             name = getSelectionName();
 
             try
             {
-                evaluateFormula = (HashSet<String>)sp.SetContentsOfCell(name, textBox3.Text.ToUpper());
+                Formula send = new Formula(textBox3.Text.ToUpper());
+                model.sendCell(name, send.ToString());
             }
             catch (FormulaFormatException)
             {
                 MessageBox.Show("Your Formula is in an invalid format");
                 return;
             }
-            catch (CircularException)
-            {
-                MessageBox.Show("Your Formula is introducing a Circular Exception and has not been entered. Please check your Formula and try again.");
-                return;
-            }
 
-            updateTextDisplays(spreadsheetPanel1);
+        }
 
-            if (sp.GetCellValue(name) is FormulaError)
-                return;
-
-            foreach(String s in evaluateFormula)
-            {
-                SSValueDisplay(s);
-            }
+        //updates the cell with the given name and contents from the server
+        private void updateCell(string name, string contents)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -465,10 +459,10 @@ namespace SpreadsheetGUI
             name = client_name;
             ssname = ss_name;
             int port = Convert.ToInt32(_port);
-            connect_to_server(IPaddress, name, ssname, port);
+            model.Connect(IPaddress, port, name, ssname);
         }
 
-        private void connect_to_server(string IP, string name, string ss_name, int port)
+      /*  private void connect_to_server(string IP, string name, string ss_name, int port)
         {
             String received = "";
             String command = "";
@@ -508,9 +502,10 @@ namespace SpreadsheetGUI
             client.Close();
         }
 
+       * */
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("undo bitches");
+            model.sendUndo();
         }
     }
 }

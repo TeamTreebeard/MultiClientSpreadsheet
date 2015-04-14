@@ -12,6 +12,11 @@ namespace SSModelNS
     {
         private StringSocket socket;
 
+        public event Action ConnectionNotFoundEvent;
+
+        public event Action<String, String> updateCellEvent;
+        private int cellCount = 0;
+
         public SSModel()
         {
             socket = null;
@@ -38,7 +43,7 @@ namespace SSModelNS
                     }
                     catch (SocketException) // Could not connect to the server.
                     {
-                        //ConnectionNotFoundEvent(); // Notify the user a connection could not be established.
+                        ConnectionNotFoundEvent();
                     }
                 }
 
@@ -48,33 +53,59 @@ namespace SSModelNS
 
         private void LineReceived(String s, Exception e, object p)
         {
-            String received = "";
+            String info = "";
             String command = "";
 
-            command = received.Substring(0, received.IndexOf("\n"));
-            received = received.Substring(received.IndexOf("\n"));
+            command = s.Substring(0, command.IndexOf(" "));
 
-
-            if (command.Substring(0, command.IndexOf(" ")) == "connected")
+            if (command == "connected")
             {
 
             }
-            else if (command.Substring(0, command.IndexOf(" ")) == "cell")
+            else if (command == "cell")
             {
-
-
+                info = s.Substring(5);
+                updateCellEvent(s.Substring(5, s.IndexOf(" ")), s.Substring(s.IndexOf(" ")+1));
             }
-            else if (command.Substring(0, command.IndexOf(" ")) == "error")
+            else if (command == "error")
             {
-
+                info = s.Substring(6, 1);
+                if (Convert.ToInt32(info) == 0)
+                {
+                    //do error stuff?
+                }
+                else if(Convert.ToInt32(info) == 1)
+                {
+                    //do error stuff?
+                }
+                else if (Convert.ToInt32(info) == 2)
+                {
+                    //do error stuff?
+                }
+                else if (Convert.ToInt32(info) == 3)
+                {
+                    //do error stuff?
+                }
+                if (Convert.ToInt32(info) == 4)
+                {
+                    //do error stuff?
+                }
             }
 
+            socket.BeginReceive(LineReceived, null);
+        }
 
+        public void sendUndo()
+        {
+            socket.BeginSend("undo\n", (e, p) => { }, socket);
         }
 
 
+        public void sendCell(string name, string contents)
+        {
 
-
-
+            socket.BeginSend("cell " + name + " " + contents + "\n", (e, o) => { }, socket);
+            socket.BeginReceive(LineReceived, null);
+        }
     }
 }

@@ -108,6 +108,10 @@
       <Project>{56eb475d-a2de-41a1-8206-095089aa8b1b}</Project>
       <Name>Spreadsheet</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SSModel\SSModel.csproj">
+      <Project>{e2d01bda-614c-4d04-bfff-573cd44aa3db}</Project>
+      <Name>SSModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\StringSocket\StringSocket.csproj">
       <Project>{e1838f9a-bccc-423d-a1c1-f11372af78df}</Project>
       <Name>StringSocket</Name>
