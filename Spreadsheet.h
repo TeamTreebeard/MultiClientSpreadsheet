@@ -6,13 +6,17 @@
 #include <map>
 #include <stack>
 #include "DependencyGraph.h"
+#include "user.h"
 
 using namespace std;
 
 class Spreadsheet
 {
   // Struct containing a cell name and contents
-  struct cell;
+  struct cell{
+    string name;
+    string content;
+  };
 
 	public:
 
@@ -37,15 +41,11 @@ class Spreadsheet
 	*/
 	string GetCellValue(string name);
 
-	/*
-	  Sends the updated cell to all spreadsheet users
-	 */
-	void sendAll(std::string info)
 
 	/* Undoes the last change made to the spreadhsheet and sends it
            to the users
 	*/
-	void undo();
+	string undo();
 
 	/*
 	  Adds a new user to the spreadsheet
@@ -89,7 +89,7 @@ class Spreadsheet
 	For example, if name is A1, B1 contains A1*2, and C1 contains B1+A1, the
 	set {A1, B1, C1} is returned.
 	*/
-	vector<string> SetContentsOfCell(string name, string content, boolean isUndo);
+	void SetContentsOfCell(string name, string content, bool isUndo);
 	/*
 	If name is null, throws an ArgumentNull Exception
 	
@@ -136,7 +136,7 @@ class Spreadsheet
 	cell name and the corresponding content to that cell so that when the file
 	is opened, the same Spreadsheet can be build with it when using Open.
 	*/
-	void Save(string filename);
+	void Save();
 	/*
 	Looks for a .txt file in a relative path with the file name. Will then read
 	the file's contents and builds a new Spreadsheet.
@@ -169,6 +169,13 @@ class Spreadsheet
 
 	// Holds all the users in the spreadsheet
 	std::vector<user> userList;
+
+	string normalize(string content);
+
+	vector<string> getVariables(string content);
+
+	string ss_name;
+	
 };
 
 

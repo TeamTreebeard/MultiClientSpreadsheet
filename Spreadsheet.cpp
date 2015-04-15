@@ -1,71 +1,100 @@
 #include <iostream>
+#include <locale>
+#include <boost/algorithm/string.hpp>
+#include <stdlib.h> 
+#include <fstream>
 #include "Spreadsheet.h"
 #include "CircularException.h"
 
 using namespace std;
 
-Spreadsheet::Spreadsheet()
+Spreadsheet::Spreadsheet(string filename)
 {
+  ss_name = filename;
 }
 
-struct cell{
-  string name, content;
-};
-
-void Spreadsheet::sendAll(string info)
-{
-    for(int i = 0; i < userList.size(); i++)
-      {
-	
-      }
-}
-
-void Spreadsheet::undo();
-{
-  cell lastChange = undoList.pop()
-  string change = lastChange.name;
-  change += lastChange.content;
-  sendAll(change);
-
-}
-
-void Spreadsheet::adduser(user newUser);
-{
-  userList.push_back(newUser);
-}
-
-string Spreadsheet::GetCellValue(string name)
+string Spreadsheet::undo()
 {
   
+  cell lastChange = undoList.top();
+  undoList.pop();
+  string name = lastChange.name;
+  string content = lastChange.content;
+  SetContentsOfCell(name, content, true);
+  string change = name + " " +  content;
+  return change;
+}
+
+void Spreadsheet::addUser(user newUser)
+{
+  // userList.push_back(newUser);
 }
 
 string Spreadsheet::GetCellContents(string name)
 {
-	
+  name = normalize(name);
+  for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
+    {
+      if(it->first == name)
+	  return sheet[name];
+    }	
+  return "";
 }
 
 vector<string> Spreadsheet::GetNamesOfAllNonemptyCells()
 {
-	
+  vector<string> returnVector;
+  for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
+    {
+      returnVector.push_back(it->first);
+    }
+  return returnVector;
 }
 
-vector<string> Spreadsheet::SetContentsOfCell (string name, string content, boolean isUndo)
+void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 {
-  if(content == null || content == "")
+  name = normalize(name);
+  content = normalize(content);
+  if(name == "")
     {
     }
-  // else
-
+  
   if(isUndo == false)
     {
-      cell newChange;
-      newChange.name = name;
-      newChange.content = content;
-      undoList.push(newChange);
-    }
-
- 
-	
+      string copy;
+     for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
+	{
+	  if(it->first == name)
+	    {
+	      copy = it->second;
+	      vector<string> blankVector;
+	      graph.ReplaceDependents(name, blankVector);
+	    }
+	  sheet[name] = content;
+	}
+      // Check to see if formula
+      if(content[0] == '=')
+	{
+	  vector<string> variables = getVariables(content);
+	  for(int i = 0; i < variables.size(); i++)
+	    {
+	      graph.AddDependency(name, variables[i]);
+	    }
+	}
+      try
+	{
+	  GetCellsToRecalculate(name);
+	  cell newChange;
+	  newChange.name = name;
+	  newChange.content = content;
+	  undoList.push(newChange);
+	}
+      catch(CircularException e)
+	{
+	  SetContentsOfCell(name, copy, isUndo);
+	  throw e;
+	}
+    }	
 }
 
 vector<string> Spreadsheet::GetDirectDependents(string name)
@@ -79,13 +108,29 @@ vector<string> Spreadsheet::GetCellsToRecalculate(string name)
 	return GetCellsToRecalculate(new_list);
 }
 
-void Spreadsheet::Save(string filename)
+void Spreadsheet::Save()
 {
+  ofstream stream;
+  string filename = ss_name = ".txt.";
+  stream.open(filename.c_str());
+  for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
+    {
+      stream << it->first << " "<< it->second << "\n";
+    }
+  stream.close();
 	
 }
 
 void Spreadsheet::Open(string filename)
 {
+  ifstream stream;
+  string name, contents;
+  stream.open(filename.c_str());
+  while(stream >> name >> contents)
+    {
+      SetContentsOfCell(name, contents, false);
+    }
+  stream.close();
 	
 }
 
@@ -128,4 +173,27 @@ void Spreadsheet::Visit(string start, string name, vector<string>& visited, vect
 	}
 	//needs to be push_front
 	changed.push_back(name);
+}
+
+string Spreadsheet::normalize(string content)
+{
+  locale loc;
+  return toupper(content, loc);
+}
+
+vector<string> Spreadsheet::getVariables(string content)
+{
+  vector<string> strs;
+  vector<string> myReturn;
+  boost::split(strs, content, boost::is_any_of("-|+|/|*"));
+  for(int i = 0; i < strs.size(); i++)
+  {
+    if(strs[i] != "0")
+      {
+	int value = atoi(strs[i].c_str());
+	if(value == 0)
+	  myReturn.push_back(strs[i]);
+      }
+  }
+  return myReturn;
 }
