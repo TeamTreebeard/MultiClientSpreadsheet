@@ -11,15 +11,17 @@ namespace SSModelNS
     public class SSModel
     {
         private StringSocket socket;
+        public Boolean connected;
 
         public event Action ConnectionNotFoundEvent;
 
         public event Action<String, String> updateCellEvent;
-        private int cellCount = 0;
+        public event Action<String> cellErrorEvent;
 
         public SSModel()
         {
             socket = null;
+            connected = false;
         }
 
 
@@ -38,8 +40,8 @@ namespace SSModelNS
                         // Try to establish a connection through StringSocket.
                         TcpClient client = new TcpClient(hostname, port);
                         socket = new StringSocket(client.Client, ASCIIEncoding.Default);
-                        socket.BeginSend("connect " + name + ss_name + "\n", (e, p) => { }, null); // Send a protocol specified message to connect
-                        socket.BeginReceive(LineReceived, null); // Wait for the server to respond with a match start protocol message.
+                        socket.BeginSend("connect " + name +" "+ ss_name + "\n", (e, p) => { }, null); // Send a protocol specified message to connect
+                        socket.BeginReceive(LineReceived, socket); // Wait for the server to respond with a match start protocol message.
                     }
                     catch (SocketException) // Could not connect to the server.
                     {
@@ -49,46 +51,55 @@ namespace SSModelNS
 
             }
         }
-
-
+        
+        //parses the string received from the server to determine what action to take
+        //The first word is interpreted as the command.
+        //If the command = connected, prepares the client to receive incoming cells
+        //if the command = cell, updates the spreadsheet with that cell
+        //if the command is error, takes the appropriate action for the error number
+        //otherwise the client will ignore the string
         private void LineReceived(String s, Exception e, object p)
         {
             String info = "";
             String command = "";
 
-            command = s.Substring(0, command.IndexOf(" "));
+            command = s.Substring(0, s.IndexOf(" "));
 
             if (command == "connected")
             {
+                //don't really need to do anything with this info, but we have successfully connected to a SS so set identifier to true.
+                connected = true;
+                System.Diagnostics.Debug.Write(connected);
 
             }
             else if (command == "cell")
             {
                 info = s.Substring(5);
-                updateCellEvent(s.Substring(5, s.IndexOf(" ")), s.Substring(s.IndexOf(" ")+1));
+                updateCellEvent(info.Substring(0, info.IndexOf(" ")), info.Substring(info.IndexOf(" ")+1));
             }
             else if (command == "error")
             {
                 info = s.Substring(6, 1);
                 if (Convert.ToInt32(info) == 0)
                 {
-                    //do error stuff?
+                    //thanks for that SUPER HELPFUL ERROR - "General error"
+                    System.Diagnostics.Debug.Write(info);
                 }
                 else if(Convert.ToInt32(info) == 1)
                 {
-                    //do error stuff?
+                    cellErrorEvent(s.Substring(8));
                 }
                 else if (Convert.ToInt32(info) == 2)
                 {
-                    //do error stuff?
+                    //thanks for ANOTHER SUPER HELPFUL ERROR - invalid command
                 }
                 else if (Convert.ToInt32(info) == 3)
                 {
-                    //do error stuff?
+                    //can't perform in current state?
                 }
                 if (Convert.ToInt32(info) == 4)
                 {
-                    //do error stuff?
+                    registerUser(s.Substring(8));
                 }
             }
 
@@ -97,7 +108,14 @@ namespace SSModelNS
 
         public void sendUndo()
         {
-            socket.BeginSend("undo\n", (e, p) => { }, socket);
+            try
+            {
+                socket.BeginSend("undo\n", (e, p) => { }, socket);
+            }
+            catch(SocketException)
+            {
+                // no undo should happen, we're probably not connected right now.
+            }
         }
 
 
@@ -106,6 +124,17 @@ namespace SSModelNS
 
             socket.BeginSend("cell " + name + " " + contents + "\n", (e, o) => { }, socket);
             socket.BeginReceive(LineReceived, null);
+        }
+
+        public void registerUser(string name)
+        {
+            socket.BeginSend("register " + name + "\n", (e, o) => { }, socket);
+            socket.BeginReceive(LineReceived, null);
+        }
+
+        public void saveSheet()
+        {
+            socket.BeginSend("save\n", (e, o) => { }, socket);
         }
     }
 }

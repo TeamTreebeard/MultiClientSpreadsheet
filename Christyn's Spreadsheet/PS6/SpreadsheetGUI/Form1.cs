@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using SS;
 using SpreadsheetUtilities;
 using System.Net.Sockets;
+using System.Threading;
 using System.Net;
 using SSModelNS;
 
@@ -24,8 +25,9 @@ namespace SpreadsheetGUI
     public partial class Form1 : Form
     {
         private Spreadsheet sp;
-        private String fileName, IPaddress, name, ssname;
+        private String IPaddress, name, ssname;
         private SSModel model;
+        public int count;
 
         /// <summary>
         /// Creates a new empty spreadsheet
@@ -36,23 +38,9 @@ namespace SpreadsheetGUI
 
             model = new SSModel();
             sp = new Spreadsheet(isNameValid, t => t.ToUpper(), "ps6");
-            fileName = null;
-            updateTextDisplays(spreadsheetPanel1);
 
             model.updateCellEvent += updateCell;
-        }
-
-        /// <summary>
-        /// Creates a spreadsheet form and populates using a saved spreadsheet.
-        /// </summary>
-        /// <param name="path"></param>
-        public Form1(String path)
-        {
-            InitializeComponent();
-
-            sp = new Spreadsheet(path, isNameValid, t => t.ToUpper(), "ps6");
-            fileName = path;
-            updateTextDisplays(spreadsheetPanel1);
+            model.cellErrorEvent += cellError;
         }
 
         /// <summary>
@@ -65,31 +53,34 @@ namespace SpreadsheetGUI
             //display cellName box
             String temp = getSelectionName();
 
-            textBox3.Focus();    // puts cursor in editable contents box when the cell is selected so you can began entering formula
+            this.Invoke((MethodInvoker)delegate
+            {
+                textBox3.Focus();    // puts cursor in editable contents box when the cell is selected so you can began entering formula
+            
+                cellNameBox.Text = temp;
 
-            cellNameBox.Text = temp;
-
-            //display cellValue box
-            object value = sp.GetCellValue(temp);
-            if(value is String || value is double)
-            {
-                textBox2.Text = value.ToString();
-            }
-            else
-            {
-                FormulaError fe = (FormulaError)value;
-                MessageBox.Show(fe.Reason);
-            }
-            //display EDITABLE cell contents
-            object contents = sp.GetCellContents(temp);
-            if (contents is Formula)
-            {
-                textBox3.Text = "="+contents.ToString();
-            }
-            else
-            {
-                textBox3.Text = contents.ToString();
-            }
+                //display cellValue box
+                object value = sp.GetCellValue(temp);
+                if (value is String || value is double)
+                {
+                    textBox2.Text = value.ToString();
+                }
+                else
+                {
+                    FormulaError fe = (FormulaError)value;
+                    MessageBox.Show(fe.Reason);
+                }
+                //display EDITABLE cell contents
+                object contents = sp.GetCellContents(temp);
+                if (contents is Formula)
+                {
+                    textBox3.Text = "=" + contents.ToString();
+                }
+                else
+                {
+                    textBox3.Text = contents.ToString();
+                }
+            });
         }
 
 
@@ -100,7 +91,7 @@ namespace SpreadsheetGUI
         /// <returns></returns>
         private bool isNameValid(String s)
         {
-            return ((Regex.IsMatch(s, "^[A-za-z]+[0-9]+$")));
+            return ((Regex.IsMatch(s, "^[A-za-z][0-9]{1,2}$")));
         }
 
         /// <summary>
@@ -113,11 +104,26 @@ namespace SpreadsheetGUI
         private void evaluate_Click(object sender, EventArgs e)
         {
             String name;
+            string temp;
+
             name = getSelectionName();
 
+            Boolean isformula = false;
+
+            temp = textBox3.Text;
+
+            if(textBox3.Text.StartsWith("="))
+            {
+                isformula = true;
+                temp = temp.Substring(1);
+            }
             try
             {
-                Formula send = new Formula(textBox3.Text.ToUpper());
+                Formula send = new Formula(temp.ToUpper());
+                if (isformula)
+                {
+                    temp = send.ToString().Insert(0, "=");
+                }
                 model.sendCell(name, send.ToString());
             }
             catch (FormulaFormatException)
@@ -131,7 +137,36 @@ namespace SpreadsheetGUI
         //updates the cell with the given name and contents from the server
         private void updateCell(string name, string contents)
         {
-            throw new NotImplementedException();
+            HashSet<String> evaluateFormula;
+            try
+            {
+                evaluateFormula = (HashSet<String>)sp.SetContentsOfCell(name, contents);
+            }
+            catch (FormulaFormatException)
+            {
+                MessageBox.Show("Your Formula is in an invalid format");
+                return;
+            }
+            catch (CircularException)
+            {
+                MessageBox.Show("Your Formula is introducing a Circular Exception and has not been entered. Please check your Formula and try again.");
+                return;
+            }
+            updateTextDisplays(spreadsheetPanel1);
+
+            if (sp.GetCellValue(name) is FormulaError)
+                return;
+
+            foreach(String s in evaluateFormula)
+            {
+                SSValueDisplay(s);
+            }
+        }
+
+        //if error returned is was from attempting to add an invalid cell
+        private void cellError(string error_message)
+        {
+            MessageBox.Show("You PROBABLY introduced a Circular Dependency. But maybe not. But probably.");
         }
 
         /// <summary>
@@ -189,64 +224,6 @@ namespace SpreadsheetGUI
         }
 
         /// <summary>
-        /// Gives a summary of how the spreadsheet GUI is used
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void help_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("After starting the program, click the spreadsheet to begin navigating the cells or entering data." + "\n" +
-                "You can navigate the Spreadsheet using your mouse to select a cell or by using the arrow keys." + "\n" + 
-                "Once you are on your selected cell you can start typing to enter in the data." + "\n" + 
-                "To move the data into the spreadsheet you can hit the 'Enter' button, or hit the Enter key on your keyboard" + "\n" +
-                "Use the file menu to Save your spreadsheet with the 'Save' button, Open a spreadsheet from file with 'Open', " + 
-                "ppen a new, blank spreadsheet with 'New', or Close out the current spreadsheet with 'Close' or by hitting the red 'x'." + 
-                "\n" + "If the spreadsheet has been altered since the last save or since it was opened you will be prompted to save." + "\n" 
-                + "Any errors opening, saving, or entering data will cause an error message to display and no changes will be made.");
-        }
-
-        /// <summary>
-        /// Saves spreadsheet. If the member variable fileName is null, a dialog will open allowing the user to Save.
-        /// If a filename is set, it will overwrite the existing copy.
-        /// 
-        /// If no changes have been made since the file was last saved or opened, no save will occur.
-        /// 
-        /// If an error occurs while saving the user will be informed that no save has occurred.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-            if (fileName == null)
-            {
-                saveFileDialog1.Filter = "Spreadsheet files (*.sprd)|*.sprd|All files (*.*)|*.*";
-                saveFileDialog1.ShowDialog();
-
-                try
-                {
-                    if (saveFileDialog1.FileName != "")
-                    {
-                        fileName = saveFileDialog1.FileName;
-                        sp.Save(fileName);
-                    }
-                }
-                catch(Exception)
-                {
-                    MessageBox.Show("File not saved");
-                }
-            }
-
-            else
-            {
-                if (sp.Changed)
-                {
-                    sp.Save(fileName);
-                }
-            }
-        }
-
-        /// <summary>
         /// Opens a new, blank spreadsheet in a new window.
         /// </summary>
         /// <param name="sender"></param>
@@ -256,35 +233,6 @@ namespace SpreadsheetGUI
             SSApplicationContext.getAppContext().RunForm(new Form1());
         }
 
-        /// <summary>
-        /// Opens a spreadsheet from file. If an error occurs while populating the spreadsheet a popup will inform you and no spreadsheet will
-        /// be opened.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            openFileDialog1.Filter = "Spreadsheet files (*.sprd)|*.sprd|All files (*.*)|*.*";
-            openFileDialog1.ShowDialog();
-
-            if(openFileDialog1.FileName != "")
-            {
-                try
-                {
-                    Form1 toOpen = (new Form1(openFileDialog1.FileName));
-                    SSApplicationContext.getAppContext().RunForm(toOpen);
-
-                    foreach (string s in toOpen.sp.GetNamesOfAllNonemptyCells())
-                    {
-                        toOpen.SSValueDisplay(s);
-                    }
-                }
-                catch (SpreadsheetReadWriteException)
-                {
-                    MessageBox.Show("Error reading file.");
-                }
-            }
-        }
 
         /// <summary>
         /// Closes the spreadsheet. If the spreadsheet has been changed since it was opened or created it will ask
@@ -296,20 +244,7 @@ namespace SpreadsheetGUI
         {
             if (sp.Changed)
             {
-                DialogResult result = MessageBox.Show("The Spreadsheet has been altered, do you want to save?", "Warning", 
-                                                    MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                if(result == DialogResult.Yes)
-                 {
-                    saveToolStripMenuItem.PerformClick();
-                 }      
-                else if(result == DialogResult.No)
-                 {
-                    Close();
-                 }
-                else if (result == DialogResult.Cancel)
-                 {
-                     // do nothing
-                 }
+                model.saveSheet();
             }
             else
             {
@@ -325,20 +260,11 @@ namespace SpreadsheetGUI
         {
             if (sp.Changed)
             {
-                DialogResult result = MessageBox.Show("The Spreadsheet has been altered, do you want to save?", "Warning",
-                                                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (result == DialogResult.Yes)
-                {
-                    saveToolStripMenuItem.PerformClick();
-                }
-                else if (result == DialogResult.No)
-                {
-                   // just close
-                }
+                model.saveSheet();
             }
             else
             {
-               //just close
+                //just close
             }
         }
 
@@ -447,12 +373,14 @@ namespace SpreadsheetGUI
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        //Open connection window for user to input connection info
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form2 connect_form = new Form2(this);
             connect_form.Show();
         }
 
+        //set connection variables and then call 
         public void connection_settings(string IP, string client_name, string ss_name, string _port)
         {
             IPaddress = IP;
@@ -462,50 +390,21 @@ namespace SpreadsheetGUI
             model.Connect(IPaddress, port, name, ssname);
         }
 
-      /*  private void connect_to_server(string IP, string name, string ss_name, int port)
-        {
-            String received = "";
-            String command = "";
-            IPAddress ip;
-            if(IPAddress.TryParse(IP, out ip))
-            {
-                IP = Dns.GetHostByAddress(ip).HostName;
-            }
-            TcpClient client = new TcpClient(IP, port);
-            NetworkStream stream = client.GetStream();
-            string connection = "connect " + name + " " + ss_name + "\n";
-            byte[] toSend = ASCIIEncoding.ASCII.GetBytes(connection);
-            stream.Write(toSend, 0, toSend.Length);
-
-            byte[] toRead = new byte[client.ReceiveBufferSize];
-            while (!received.Contains("\n")) { 
-            int bytesRead = stream.Read(toRead, 0, client.ReceiveBufferSize);
-            received += Encoding.ASCII.GetString(toRead, 0, bytesRead);
-            }
-            command = received.Substring(0, received.IndexOf("\n"));
-            received = received.Substring(received.IndexOf("\n"));
-
-            if(command.Substring(0, command.IndexOf(" ")) == "connected")
-            {
-
-            }
-            else if(command.Substring(0, command.IndexOf(" ")) == "cell")
-            {
-
-
-            }
-            else if(command.Substring(0, command.IndexOf(" ")) == "error")
-            {
-                
-            }
-
-            client.Close();
-        }
-
-       * */
+        //sends command to model when CTRL+Z or the undo button is activated
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             model.sendUndo();
+        }
+
+        private void registerUserToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form3 register_form = new Form3(this);
+            register_form.Show();
+        }
+
+        public void registerUser(string username)
+        {
+           model.registerUser(username);
         }
     }
 }
