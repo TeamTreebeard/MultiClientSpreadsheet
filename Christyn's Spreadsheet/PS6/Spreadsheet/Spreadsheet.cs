@@ -810,17 +810,17 @@ namespace SS
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private double GetValForLookup(string name)
+        private object GetValForLookup(string name)
         {
             double temp;
 
             if (name == null)
-                throw new ArgumentException("Name is null");
+                return new FormulaError();
 
             String s = Normalize(name);
 
             if (!(isNameValid(s)))
-                throw new ArgumentException("name is invalid");
+                return new FormulaError();
 
             try
             {
@@ -828,11 +828,11 @@ namespace SS
                 if (spread.TryGetValue(s, out c))
                     temp = (double)c.getValue();
                 else
-                    throw new ArgumentException("The cell contained no value");
+                    return new FormulaError();
             }
             catch (InvalidCastException)
             {
-                throw new ArgumentException("The cell did not contain a double.");
+                return new FormulaError();
             }
 
             return temp;
@@ -916,7 +916,7 @@ namespace SS
             /// </summary>
             /// <param name="f"></param>
             /// <param name="lookup">lookup Func for method to return variable values</param>
-            public Cell(Formula f, Func<string, double> lookup)
+            public Cell(Formula f, Func<string, object> lookup)
             {
                 contentsF = f;
 
@@ -959,7 +959,7 @@ namespace SS
             /// Used to recalculate the values of Formula cells after a cell on which it depends
             /// has been changed
             /// </summary>
-            public void recalculate(Func<string, double> lookup)
+            public void recalculate(Func<string, object> lookup)
             {
                 if (this.getContents() is Formula)
                 {
