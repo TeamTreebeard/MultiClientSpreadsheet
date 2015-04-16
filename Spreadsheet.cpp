@@ -4,22 +4,13 @@
 #include <stdlib.h> 
 #include <fstream>
 #include "Spreadsheet.h"
+#include "CircularException.h"
 
 using namespace std;
 
 Spreadsheet::Spreadsheet(string filename)
 {
   ss_name = filename;
-}
-
-Spreadsheet::Spreadsheet()
-{
-	
-}
-
-Spreadsheet::~Spreadsheet()
-{
-	
 }
 
 string Spreadsheet::undo()
@@ -42,6 +33,16 @@ string Spreadsheet::getName()
 void Spreadsheet::addUser(user newUser)
 {
    userList.push_back(newUser);
+}
+
+bool Spreadsheet::containsUser(int ID)
+{
+    for(vector<user>::iterator it = userList.begin(); it != userList.end(); ++it) 
+    {
+      if((*it).getSocket() == ID)
+	return true;
+    }  
+    return false;
 }
 
 void Spreadsheet::removeUser(int socket)
@@ -137,7 +138,7 @@ vector<string> Spreadsheet::GetCellsToRecalculate(string name)
 void Spreadsheet::Save()
 {
   ofstream stream;
-  string filename = + "SavedFiles/" + ss_name + ".txt.";
+  string filename = ss_name = ".txt.";
   stream.open(filename.c_str());
   for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
     {
@@ -150,9 +151,8 @@ void Spreadsheet::Save()
 map<string,string> Spreadsheet::Open(string filename)
 {
   ifstream stream;
-  string name, contents, fname;
-  fname = "SavedFiles/" + filename + ".txt";
-  stream.open(fname.c_str());
+  string name, contents;
+  stream.open(filename.c_str());
   while(stream >> name >> contents)
     {
       SetContentsOfCell(name, contents, false);

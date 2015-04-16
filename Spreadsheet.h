@@ -7,7 +7,6 @@
 #include <stack>
 #include "DependencyGraph.h"
 #include "user.h"
-#include "CircularException.h"
 
 using namespace std;
 
@@ -42,7 +41,6 @@ class Spreadsheet
 	*/
 	string GetCellValue(string name);
 
-
 	/* Undoes the last change made to the spreadhsheet and sends it
            to the users
 	*/
@@ -56,6 +54,8 @@ class Spreadsheet
 	void removeUser(int socket);
 
 	string getName();
+
+	bool containsUser(int ID);
 
 	/*
 	If the name is null or invalid, throws an InvalidNameException.
