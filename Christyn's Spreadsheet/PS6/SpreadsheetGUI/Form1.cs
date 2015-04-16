@@ -42,6 +42,12 @@ namespace SpreadsheetGUI
             model.updateCellEvent += updateCell;
             model.cellErrorEvent += cellError;
             model.ConnectionNotFoundEvent += reconnect;
+            model.usedNameEvent += nameInUse;
+        }
+
+        private void nameInUse(string obj)
+        {
+            MessageBox.Show(obj+" is already registered.");
         }
 
         private void reconnect()
@@ -115,7 +121,6 @@ namespace SpreadsheetGUI
             name = getSelectionName();
 
             Boolean isformula = false;
-
             temp = textBox3.Text;
 
             if(textBox3.Text.StartsWith("="))
@@ -125,12 +130,14 @@ namespace SpreadsheetGUI
             }
             try
             {
-                Formula send = new Formula(temp.ToUpper());
                 if (isformula)
                 {
+                    Formula send = new Formula(temp.ToUpper());
                     temp = send.ToString().Insert(0, "=");
+                    model.sendCell(name, send.ToString());
                 }
-                model.sendCell(name, send.ToString());
+                model.sendCell(name, temp);
+
             }
             catch (FormulaFormatException)
             {

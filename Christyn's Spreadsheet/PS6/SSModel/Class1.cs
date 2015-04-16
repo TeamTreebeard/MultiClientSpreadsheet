@@ -17,6 +17,9 @@ namespace SSModelNS
 
         public event Action<String, String> updateCellEvent;
         public event Action<String> cellErrorEvent;
+        public event Action<String> usedNameEvent;
+
+        private Boolean registering = false;
 
         public SSModel()
         {
@@ -75,10 +78,12 @@ namespace SSModelNS
             {
                 info = s.Substring(5);
                 updateCellEvent(info.Substring(0, info.IndexOf(" ")), info.Substring(info.IndexOf(" ")+1));
+                System.Diagnostics.Debug.Write(info);
             }
             else if (command == "error")
             {
                 info = s.Substring(6, 1);
+                System.Diagnostics.Debug.Write(info);
                 if (Convert.ToInt32(info) == 0)
                 {
                     //thanks for that SUPER HELPFUL ERROR - "General error"
@@ -98,7 +103,15 @@ namespace SSModelNS
                 }
                 else if (Convert.ToInt32(info) == 4)
                 {
-                    registerUser(s.Substring(8));
+                    if (!registering)
+                    {
+                        registerUser(s.Substring(8));
+                    }
+                    else
+                    {
+                        usedNameEvent(s.Substring(8));
+                        registering = false;
+                    }
                     System.Diagnostics.Debug.Write("here we are!");
                 }
             }
@@ -115,7 +128,7 @@ namespace SSModelNS
         {
             try
             {
-                socket.BeginSend("undo\nkdjfkjldsfkgjhd", (e, p) => { }, socket);
+                socket.BeginSend("undo\n", (e, p) => { }, socket);
             }
             catch(SocketException)
             {
@@ -133,6 +146,7 @@ namespace SSModelNS
 
         public void registerUser(string name)
         {
+            registering = true;
             socket.BeginSend("register " + name + "\n", (e, o) => { }, socket);
             socket.BeginReceive(LineReceived, null);
         }

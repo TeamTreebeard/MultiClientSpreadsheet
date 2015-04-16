@@ -34,7 +34,7 @@ int sendAll(Spreadsheet ss, string message){
 	
 }
 
-Spreadsheet findSS(User user){
+Spreadsheet findSS(int client){
 	
 	
 }
@@ -80,13 +80,21 @@ Spreadsheet findSS(User user){
 	
 		if(command.compare("connect")==0)
 		{
-
-			if(true)
+			string username = msg.substr(8, msg.find_first_of(" ", 8));
+			username = username.substr(0, username.find_first_of(" "));
+			bool exists = false;
+			for(int k = 0; k<userList.size(); k++)
+			{
+				if(userList[k] == username)
+				{
+					exists = true;
+					break;
+				}
+			}
+			if(exists)
 			{
 				// open spreadsheet
 				//create user and add to spreadsheet
-				string username = msg.substr(8, msg.find_first_of(" ", 8));
-				username = username.substr(0, username.find_first_of(" "));
 				string ssname = msg.substr(9+username.length(), msg.find("\n"));
 				bool found = false;
 				for(int i = 0; i<SpreadsheetList.size(); i++)
@@ -124,8 +132,6 @@ Spreadsheet findSS(User user){
 			}
 			else
 			{
-				string username = msg.substr(8, msg.find_first_of(" ", 8));
-				username = username.substr(0, username.find_first_of(" "));
 				message = "error 4 " + username + "\n";
 				send(client, message);
 			}
@@ -160,8 +166,8 @@ Spreadsheet findSS(User user){
 				{
 					stream<<userList[i]<<"\n";
 				}
+				stream.close();
 			}
-			//add user to list 
 		}
 		
 		/***************HEMI*********************/
