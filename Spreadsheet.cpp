@@ -25,7 +25,7 @@ string Spreadsheet::undo()
   return change;
 }
 
-void getName();
+string Spreadsheet::getName()
 {
   return ss_name;
 }
