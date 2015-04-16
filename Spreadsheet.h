@@ -54,6 +54,8 @@ class Spreadsheet
 
 	void removeUser(int socket);
 
+	string getName();
+
 	/*
 	If the name is null or invalid, throws an InvalidNameException.
 	Otherwise, returns the contents (as opposed to the value) of the

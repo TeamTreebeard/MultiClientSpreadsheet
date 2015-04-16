@@ -25,6 +25,11 @@ string Spreadsheet::undo()
   return change;
 }
 
+void getName();
+{
+  return ss_name;
+}
+
 void Spreadsheet::addUser(user newUser)
 {
    userList.push_back(newUser);
@@ -36,8 +41,7 @@ void Spreadsheet::removeUser(int socket)
     {
       if((*it).getSocket() == socket)
 	userList.erase(it);
-    }
-  
+    }  
 }
 
 string Spreadsheet::GetCellContents(string name)
