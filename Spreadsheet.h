@@ -51,10 +51,13 @@ class Spreadsheet
 	 */
 	void addUser(user newUser);
 
+	// Removes the specified user from the spreadsheet
 	void removeUser(int socket);
 
+	// Returns the name of the spreadsheet
 	string getName();
 
+	// Returns true or false if the user is already in the spreadsheet
 	bool containsUser(int ID);
 
 	/*
@@ -175,10 +178,13 @@ class Spreadsheet
 	// Holds all the users in the spreadsheet
 	std::vector<user> userList;
 
+	// Normalizes the string provided 
 	string normalize(string content);
 
+	// Gets all the varibles in the given formula
 	vector<string> getVariables(string content);
 
+	// The name of the spreadsheet
 	string ss_name;
 	
 };
