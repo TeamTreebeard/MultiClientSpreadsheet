@@ -7,6 +7,7 @@
 #include <stack>
 #include "DependencyGraph.h"
 #include "user.h"
+#include "CircularException.h"
 
 using namespace std;
 

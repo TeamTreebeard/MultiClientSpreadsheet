@@ -4,7 +4,6 @@
 #include <stdlib.h> 
 #include <fstream>
 #include "Spreadsheet.h"
-#include "CircularException.h"
 
 using namespace std;
 
