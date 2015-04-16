@@ -52,6 +52,8 @@ class Spreadsheet
 	 */
 	void addUser(user newUser);
 
+	void removeUser(int socket);
+
 	/*
 	If the name is null or invalid, throws an InvalidNameException.
 	Otherwise, returns the contents (as opposed to the value) of the
@@ -141,7 +143,7 @@ class Spreadsheet
 	Looks for a .txt file in a relative path with the file name. Will then read
 	the file's contents and builds a new Spreadsheet.
 	*/
-	void Open(string filename);
+	map<string,string> Open(string filename);
 
 	private:
 	/*

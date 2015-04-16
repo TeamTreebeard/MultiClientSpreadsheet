@@ -27,7 +27,17 @@ string Spreadsheet::undo()
 
 void Spreadsheet::addUser(user newUser)
 {
-  // userList.push_back(newUser);
+   userList.push_back(newUser);
+}
+
+void Spreadsheet::removeUser(int socket)
+{
+  for(vector<user>::iterator it = userList.begin(); it != userList.end(); ++it) 
+    {
+      if((*it).getSocket() == socket)
+	userList.erase(it);
+    }
+  
 }
 
 string Spreadsheet::GetCellContents(string name)
@@ -57,6 +67,8 @@ void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
   content = normalize(content);
   if(name == "")
     {
+      vector<string> blankGraph;
+      graph.ReplaceDependents(name, blankGraph);
     }
   
   if(isUndo == false)
@@ -81,6 +93,7 @@ void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 	      graph.AddDependency(name, variables[i]);
 	    }
 	}
+
       try
 	{
 	  GetCellsToRecalculate(name);
@@ -121,7 +134,7 @@ void Spreadsheet::Save()
 	
 }
 
-void Spreadsheet::Open(string filename)
+map<string,string> Spreadsheet::Open(string filename)
 {
   ifstream stream;
   string name, contents;
@@ -131,6 +144,8 @@ void Spreadsheet::Open(string filename)
       SetContentsOfCell(name, contents, false);
     }
   stream.close();
+
+  return sheet;
 	
 }
 
@@ -166,10 +181,10 @@ void Spreadsheet::Visit(string start, string name, vector<string>& visited, vect
 	
 	for(int i = 0; i < dependents.size(); i++)
 	{
-		if(dependents[i] == start)
-			throw CircularException();
-		else
-			Visit(start, dependents[i], visited, changed);
+	  if(dependents[i] == start)
+	    throw CircularException();
+	  else
+	    Visit(start, dependents[i], visited, changed);
 	}
 	//needs to be push_front
 	changed.push_back(name);
@@ -186,7 +201,16 @@ vector<string> Spreadsheet::getVariables(string content)
   vector<string> strs;
   vector<string> myReturn;
   boost::split(strs, content, boost::is_any_of("-|+|/|*"));
-  for(int i = 0; i < strs.size(); i++)
+  for (vector<string>::iterator it = strs.begin(); it != strs.end(); ++it) 
+    {
+      if((*it) != "0")
+	{
+	  int value = atoi((*it).c_str());
+	  if(value == 0)
+	    myReturn.push_back((*it));
+	}
+    }
+  /*for(int i = 0; i < strs.size(); i++)
   {
     if(strs[i] != "0")
       {
@@ -194,6 +218,6 @@ vector<string> Spreadsheet::getVariables(string content)
 	if(value == 0)
 	  myReturn.push_back(strs[i]);
       }
-  }
+      }*/
   return myReturn;
 }
