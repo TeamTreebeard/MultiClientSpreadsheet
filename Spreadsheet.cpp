@@ -137,7 +137,7 @@ vector<string> Spreadsheet::GetCellsToRecalculate(string name)
 void Spreadsheet::Save()
 {
   ofstream stream;
-  string filename = ss_name = ".txt.";
+  string filename = + "SavedFiles/" + ss_name + ".txt.";
   stream.open(filename.c_str());
   for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
     {
@@ -150,8 +150,9 @@ void Spreadsheet::Save()
 map<string,string> Spreadsheet::Open(string filename)
 {
   ifstream stream;
-  string name, contents;
-  stream.open(filename.c_str());
+  string name, contents, fname;
+  fname = "SavedFiles/" + filename + ".txt";
+  stream.open(fname.c_str());
   while(stream >> name >> contents)
     {
       SetContentsOfCell(name, contents, false);
