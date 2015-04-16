@@ -13,6 +13,16 @@ Spreadsheet::Spreadsheet(string filename)
   ss_name = filename;
 }
 
+Spreadsheet::Spreadsheet()
+{
+	
+}
+
+Spreadsheet::~Spreadsheet()
+{
+	
+}
+
 string Spreadsheet::undo()
 {
   
