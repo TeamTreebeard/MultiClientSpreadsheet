@@ -12,9 +12,9 @@ using namespace std;
 
 int main()
 {
-	string test = "5-7";
+	string test = "5-7+6/8*9";
 	vector<string> strs;
-	boost::split(strs, test, boost::is_any_of("-"));
+	boost::split(strs, test, boost::is_any_of("-|+|/|*"));
 	for(int i = 0; i < strs.size(); i++)
 	{
 		cout<< strs[i] << endl;
