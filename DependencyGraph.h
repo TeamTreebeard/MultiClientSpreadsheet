@@ -2,6 +2,9 @@
 #include <string>
 #include <map>
 
+#ifndef DEPENDENCYGRAPH_H
+#define DEPENDENCYGRAPH_H
+
 using namespace std;
 
 class Node
@@ -47,3 +50,5 @@ class DependencyGraph
 	vector<string> pivot;
 	bool ContainsKey(string s);
 };
+
+#endif
