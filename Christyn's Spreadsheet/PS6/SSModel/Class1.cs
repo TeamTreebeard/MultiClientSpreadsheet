@@ -64,7 +64,6 @@ namespace SSModelNS
             String command = "";
 
             command = s.Substring(0, s.IndexOf(" "));
-
             if (command == "connected")
             {
                 //don't really need to do anything with this info, but we have successfully connected to a SS so set identifier to true.
@@ -97,10 +96,16 @@ namespace SSModelNS
                 {
                     //can't perform in current state?
                 }
-                if (Convert.ToInt32(info) == 4)
+                else if (Convert.ToInt32(info) == 4)
                 {
                     registerUser(s.Substring(8));
+                    System.Diagnostics.Debug.Write("here we are!");
                 }
+            }
+
+            else
+            {
+                System.Diagnostics.Debug.Write(s);
             }
 
             socket.BeginReceive(LineReceived, null);
@@ -110,7 +115,7 @@ namespace SSModelNS
         {
             try
             {
-                socket.BeginSend("undo\n", (e, p) => { }, socket);
+                socket.BeginSend("undo\nkdjfkjldsfkgjhd", (e, p) => { }, socket);
             }
             catch(SocketException)
             {

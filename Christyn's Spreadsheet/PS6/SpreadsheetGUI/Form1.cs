@@ -41,6 +41,12 @@ namespace SpreadsheetGUI
 
             model.updateCellEvent += updateCell;
             model.cellErrorEvent += cellError;
+            model.ConnectionNotFoundEvent += reconnect;
+        }
+
+        private void reconnect()
+        {
+            MessageBox.Show("Connection Failed");
         }
 
         /// <summary>

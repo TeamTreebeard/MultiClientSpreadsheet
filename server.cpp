@@ -11,13 +11,16 @@ http://codebase.eu/source/code-cplusplus/multithreaded-socket-server/
 #include <sys/socket.h>
 #include <pthread.h>
 #include <sstream>
+#include <fstream>
 #include <cstdio>
 #include <cstdlib>
+#include "Spreadsheet.h"
 
 using namespace std;
 
+vector<Spreadsheet> SpreadsheetList;
+vector<string> userList;
 pthread_mutex_t serverLock = PTHREAD_MUTEX_INITIALIZER;
-
 //Sends messages to the client using their int socket identifier and the supplied message.
 int send(int sockt, string message)
 {
@@ -77,47 +80,91 @@ Spreadsheet findSS(User user){
 	
 		if(command.compare("connect")==0)
 		{
-			cout<<"in connect"<<endl;
-			//if name is ok
-			if(false)
+
+			if(true)
 			{
 				// open spreadsheet
 				//create user and add to spreadsheet
 				string username = msg.substr(8, msg.find_first_of(" ", 8));
 				username = username.substr(0, username.find_first_of(" "));
-				string ssname = msg.substr(9+strlen(username), msg.find("\n"));
-				cout<<"ssname == "<< ssname<<endl;
-				//check for ss
-				//if exists - open existing SSg
+				string ssname = msg.substr(9+username.length(), msg.find("\n"));
+				bool found = false;
+				for(int i = 0; i<SpreadsheetList.size(); i++)
+				{
+					if(SpreadsheetList[i].getName() == ssname)
+					{
+						found = true;
+					}
+				}
+				if(found){
+				Spreadsheet SS;
+				map<string, string> sheet = SS.Open(ssname);
 				//get cell number and send cells to client
-				int numberCells = 0;
+				int numberCells = sheet.size();
 				stringstream ss;
 				ss << numberCells;
 				string cells = ss.str();
 				cout<<"Cells == "<<cells<<endl;
 				message = "connected " + cells + " \n";
 				send(client, message);
-				//else - new vv
-				//Spreadsheet ss = new Spreadsheet();
-				//User user = new User(username, ssname, client);
+				for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
+				{
+					message = "cell " + it->first + " " + it->second + "\n"; 
+					send(client, message);
+				}
+				}
+				else{
+				Spreadsheet ss(ssname);
+				user usr(username, client);
+				ss.addUser(usr);
+				SpreadsheetList.push_back(ss);
 				message = "connected 0\n";
 				send(client, message);
-				//sendSSCells(client);
+				}
 			}
 			else
 			{
 				string username = msg.substr(8, msg.find_first_of(" ", 8));
 				username = username.substr(0, username.find_first_of(" "));
 				message = "error 4 " + username + "\n";
-				cout<<"do we get here???"<<endl;
 				send(client, message);
 			}
 		}
 		else if(command.compare("register") == 0)
 		{
 			//check if username exists 
+			string username = msg.substr(9, msg.find_first_of(" ", 9));
+			username = username.substr(0, username.find_first_of(" "));
+			bool used = false;
+			for(int j = 0; j<userList.size(); j++)
+			{
+				if(userList[j] == username)
+				{
+					break;
+					used = true;
+				}
+			}
+			if(used)
+			{
+				message = "error 4 " + username + " \n";
+				send(client, message);
+			}
+			else
+			{
+				userList.push_back(username);
+				
+				ofstream stream;
+				string filename = "userList.txt";
+				stream.open(filename.c_str());
+				for(int i = 0; i<userList.size(); i++)
+				{
+					stream<<userList[i]<<"\n";
+				}
+			}
 			//add user to list 
 		}
+		
+		/***************HEMI*********************/
 		else if(command.compare("cell") == 0)
 		{
 			if(false){
@@ -183,6 +230,17 @@ int main(int argc, char *argv[])
         cout << "ERROR on binding" << endl;
 		exit(1);
 	}
+	
+	ifstream stream;
+	string name;
+	string filename = "userList.txt";
+	stream.open(filename.c_str());
+	while(stream>>name)
+	{
+		userList.push_back(name);
+	}
+	stream.close();
+	
 	
 	//Now start listening for the clients, here process will go in sleep mode
 	//and will wait for the incoming connection
