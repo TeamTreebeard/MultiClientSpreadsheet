@@ -1,9 +1,9 @@
+#ifndef DEPENDENCYGRAPH_H
+#define DEPENDENCYGRAPH_H
+
 #include <vector>
 #include <string>
 #include <map>
-
-#ifndef DEPENDENCYGRAPH_H
-#define DEPENDENCYGRAPH_H
 
 using namespace std;
 

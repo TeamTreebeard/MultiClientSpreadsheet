@@ -1,3 +1,6 @@
+#ifndef CIRCULAREXCEPTION_H
+#define CIRCULAREXCEPTION_H
+
 class CircularException
 {
 	public:
@@ -6,3 +9,5 @@ class CircularException
 	~CircularException()
 	{}
 };
+
+#endif
