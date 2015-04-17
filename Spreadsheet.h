@@ -56,6 +56,9 @@ class Spreadsheet
 
 	// Returns the name of the spreadsheet
 	string getName();
+	
+	//returns vector of users
+	vector<int> getSocketList();
 
 	// Returns true or false if the user is already in the spreadsheet
 	bool containsUser(int ID);

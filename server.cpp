@@ -31,13 +31,6 @@ int send(int sockt, string message)
 }
 
 /*
-int sendAll(Spreadsheet ss, string message)
-{
-	
-}
-*/
-
-/*
 Returns Spreadsheet that a given socket/client belongs to.
 */
 Spreadsheet findSS(int client)
@@ -50,6 +43,18 @@ Spreadsheet findSS(int client)
 		}
 	}
 }
+
+
+int sendAll(int client, string message)
+{
+	vector<int> socketList = FindSS(client).getSocketList();
+	for(int i = 0; i < socketList.size(); i++)
+	{
+		send(i, message);
+	}
+}
+
+
 
 //receives messages from a client socket, uses sockt pointer to identify which client it came from and then
 //parses the message to determine which action to take

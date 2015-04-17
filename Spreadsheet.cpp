@@ -35,6 +35,16 @@ string Spreadsheet::undo()
   return change;
 }
 
+vector<int> Spreadsheet::getSocketList()
+{
+	vector<int> userSockets;
+	for(int i = 0; i<userList.size(); i++)
+	{
+		userSockets.push_back(userList[i].getSocket());
+	}
+	return userSockets;
+}
+
 string Spreadsheet::getName()
 {
   return ss_name;
