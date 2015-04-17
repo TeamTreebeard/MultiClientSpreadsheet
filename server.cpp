@@ -30,15 +30,24 @@ int send(int sockt, string message)
 }
 
 /*
-int sendAll(Spreadsheet ss, string message){
-	
-}
-
-Spreadsheet findSS(int client){
-	
+int sendAll(Spreadsheet ss, string message)
+{
 	
 }
 */
+Spreadsheet findSS(int client)
+{
+	for(int i=0; i < SpreadsheetList.size(); i++) // loop over all spreadsheets in vector
+	{
+		if(vector[i].containsUser(client))//check if the user is in the spreadsheet 
+		{
+			return vector[i];//if client socket id is found in the spreadsheet then the current spreadsheet is returned 
+		}
+	}
+}
+	
+}
+
 //receives messages from a client socket, uses sockt pointer to identify which client it came from and then
 //parses the message to determine which action to take
  void * receive(void * sockt) 
@@ -140,14 +149,14 @@ Spreadsheet findSS(int client){
 		{
 			//check if username exists 
 			string username = msg.substr(9, msg.find_first_of(" ", 9));
-			username = username.substr(0, username.find_first_of(" "));
+			username = username.substr(0, username.find_first_of("\n"));
 			bool used = false;
 			for(int j = 0; j<userList.size(); j++)
 			{
 				if(userList[j] == username)
 				{
-					break;
 					used = true;
+					break;
 				}
 			}
 			if(used)
@@ -157,6 +166,7 @@ Spreadsheet findSS(int client){
 			}
 			else
 			{
+				//add new user registration
 				userList.push_back(username);
 				
 				ofstream stream;
