@@ -4,22 +4,13 @@
 #include <stdlib.h> 
 #include <fstream>
 #include "Spreadsheet.h"
+#include "CircularException.h"
 
 using namespace std;
 
 Spreadsheet::Spreadsheet(string filename)
 {
   ss_name = filename;
-}
-
-Spreadsheet::Spreadsheet()
-{
-	
-}
-
-Spreadsheet::~Spreadsheet()
-{
-	
 }
 
 string Spreadsheet::undo()
@@ -42,6 +33,16 @@ string Spreadsheet::getName()
 void Spreadsheet::addUser(user newUser)
 {
    userList.push_back(newUser);
+}
+
+bool Spreadsheet::containsUser(int ID)
+{
+    for(vector<user>::iterator it = userList.begin(); it != userList.end(); ++it) 
+    {
+      if((*it).getSocket() == ID)
+	return true;
+    }  
+    return false;
 }
 
 void Spreadsheet::removeUser(int socket)

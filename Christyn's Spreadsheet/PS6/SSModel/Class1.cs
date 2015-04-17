@@ -140,8 +140,15 @@ namespace SSModelNS
         public void sendCell(string name, string contents)
         {
 
-            socket.BeginSend("cell " + name + " " + contents + "\n", (e, o) => { }, socket);
-            socket.BeginReceive(LineReceived, null);
+            try
+            {
+                socket.BeginSend("cell " + name + " " + contents + "\n", (e, o) => { }, socket);
+                socket.BeginReceive(LineReceived, null);
+            }
+            catch(SocketException)
+            {
+                //boop nothing
+            }
         }
 
         public void registerUser(string name)
