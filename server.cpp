@@ -22,14 +22,6 @@ vector<Spreadsheet> SpreadsheetList;
 vector<string> userList;
 pthread_mutex_t serverLock = PTHREAD_MUTEX_INITIALIZER;
 
-//Sends messages to the client using their int socket identifier and the supplied message.
-int send(int sockt, string message)
-{
-    int ret;
-    ret = send(sockt, message.c_str(), strlen(message.c_str()),0);
-    return 0;
-}
-
 /*
 Returns Spreadsheet that a given socket/client belongs to.
 */
@@ -44,18 +36,22 @@ Spreadsheet findSS(int client)
 	}
 }
 
-
-int sendAll(int client, string message)
+//Sends messages to the client using their int socket identifier and the supplied message.
+int send(int sockt, string message)
 {
-	vector<int> socketList = FindSS(client).getSocketList();
+    int ret;
+    ret = send(sockt, message.c_str(), strlen(message.c_str()),0);
+    return 0;
+}
+
+void sendAll(int client, string message)
+{
+	vector<int> socketList = findSS(client).getSocketList();
 	for(int i = 0; i < socketList.size(); i++)
 	{
 		send(i, message);
 	}
 }
-
-
-
 //receives messages from a client socket, uses sockt pointer to identify which client it came from and then
 //parses the message to determine which action to take
  void * receive(void * sockt) 
