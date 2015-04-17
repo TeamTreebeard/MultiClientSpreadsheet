@@ -21,6 +21,7 @@ using namespace std;
 vector<Spreadsheet> SpreadsheetList;
 vector<string> userList;
 pthread_mutex_t serverLock = PTHREAD_MUTEX_INITIALIZER;
+
 //Sends messages to the client using their int socket identifier and the supplied message.
 int send(int sockt, string message)
 {
@@ -35,17 +36,19 @@ int sendAll(Spreadsheet ss, string message)
 	
 }
 */
+
+/*
+Returns Spreadsheet that a given socket/client belongs to.
+*/
 Spreadsheet findSS(int client)
 {
 	for(int i=0; i < SpreadsheetList.size(); i++) // loop over all spreadsheets in vector
 	{
-		if(vector[i].containsUser(client))//check if the user is in the spreadsheet 
+		if(SpreadsheetList[i].containsUser(client))//check if the user is in the spreadsheet 
 		{
-			return vector[i];//if client socket id is found in the spreadsheet then the current spreadsheet is returned 
+			return SpreadsheetList[i];//if client socket id is found in the spreadsheet then the current spreadsheet is returned 
 		}
 	}
-}
-	
 }
 
 //receives messages from a client socket, uses sockt pointer to identify which client it came from and then

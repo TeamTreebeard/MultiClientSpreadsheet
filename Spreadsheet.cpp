@@ -40,7 +40,7 @@ bool Spreadsheet::containsUser(int ID)
     for(vector<user>::iterator it = userList.begin(); it != userList.end(); ++it) 
     {
       if((*it).getSocket() == ID)
-	return true;
+		return true;
     }  
     return false;
 }
