@@ -8,9 +8,19 @@
 
 using namespace std;
 
+Spreadsheet::Spreadsheet()
+{
+	//do nuthing.
+}
+
 Spreadsheet::Spreadsheet(string filename)
 {
   ss_name = filename;
+}
+
+Spreadsheet::~Spreadsheet()
+{
+	
 }
 
 string Spreadsheet::undo()
