@@ -187,7 +187,8 @@ void sendAll(int client, string message)
 		/***************HEMI*********************/
 		else if(command.compare("cell") == 0)
 		{
-			if(false){
+			if(false)
+			{
 				//cell check
 			}
 			else
@@ -199,10 +200,12 @@ void sendAll(int client, string message)
 		}
 		else if(command.compare("undo") == 0)
 		{
+			findSS(client).undo();
 			cout<<"in undo"<<endl;
 		}
 		else if(command.compare("save") == 0)
 		{
+			findSS(client).Save();
 			cout<<"in save"<<endl;
 		}	
 		
