@@ -238,7 +238,7 @@ void sendAll(int client, string message)
 		}
 		else if(command.compare("undo") == 0)
 		{
-			findSS(client).undo();//how to send out change to all clients;
+			sendAll(client, "cell "+ findSS(client).undo());//how to send out change to all clients
 			cout<<"in undo"<<endl;
 		}
 		else if(command.compare("save") == 0)
