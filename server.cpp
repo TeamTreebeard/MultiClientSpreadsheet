@@ -185,22 +185,60 @@ void sendAll(int client, string message)
 		}
 		
 		/***************HEMI*********************/
+		/*
+		*─────────────────────────────▄██▄
+		*─────────────────────────────▀███
+		*────────────────────────────────█
+		*───────────────▄▄▄▄▄────────────█
+		*──────────────▀▄────▀▄──────────█
+		*──────────▄▀▀▀▄─█▄▄▄▄█▄▄─▄▀▀▀▄──█
+		*─────────█──▄──█────────█───▄─█─█
+		*─────────▀▄───▄▀────────▀▄───▄▀─█
+		*──────────█▀▀▀────────────▀▀▀─█─█
+		*──────────█───────────────────█─█
+		*▄▀▄▄▀▄────█──▄█▀█▀█▀█▀█▀█▄────█─█
+		*█▒▒▒▒█────█──█████████████▄───█─█
+		*█▒▒▒▒█────█──██████████████▄──█─█
+		*█▒▒▒▒█────█───██████████████▄─█─█
+		*█▒▒▒▒█────█────██████████████─█─█
+		*█▒▒▒▒█────█───██████████████▀─█─█
+		*█▒▒▒▒█───██───██████████████──█─█
+		*▀████▀──██▀█──█████████████▀──█▄█
+		*──██───██──▀█──█▄█▄█▄█▄█▄█▀──▄█▀
+		*──██──██────▀█─────────────▄▀▓█
+		*──██─██──────▀█▀▄▄▄▄▄▄▄▄▄▀▀▓▓▓█
+		*──████────────█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█
+		*──███─────────█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█
+		*──██──────────█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█
+		*──██──────────█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█
+		*──██─────────▐█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█
+		*──██────────▐█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█
+		*──██───────▐█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█▌
+		*──██──────▐█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█▌
+		*──██─────▐█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█▌
+		*──██────▐█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█▌
+		*/
 		else if(command.compare("cell") == 0)
 		{
-			if(false)
+			string cellTemp = msg.substr(5, msg.find_first_of(" ", 5));//cut off command
+			string cellName = cellTemp.substr(0, cellTemp.find_first_of(" "));//get cell name
+			stering cellContents = cellTemp.substr(cellTemp.find_first_of(" "), cellTemp.size()-1);//get cell contents
+			try
 			{
-				//cell check
+				//try all the things
+				findSS(client).SetContentsOfCell(cellName, cellContents, false);//find spreadsheet and call set cell contents
+				sendAll(client, msg);//send change to all clients once change is verified
 			}
-			else
+			catch(CircularException e)//bad cell change
 			{
-				message = "error 1 cell change failed";
-				send(client,message);
+				message = "error 1 cell change failed";//prepare error message
+				send(client,message);//send message to cell change requester 
 			}
 			cout<<"in cell"<<endl;
 		}
 		else if(command.compare("undo") == 0)
 		{
-			findSS(client).undo();
+			findSS(client).undo();//how to send out change to all clients;
 			cout<<"in undo"<<endl;
 		}
 		else if(command.compare("save") == 0)
