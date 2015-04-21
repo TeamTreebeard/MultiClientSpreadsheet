@@ -10,12 +10,13 @@ using namespace std;
 
 Spreadsheet::Spreadsheet()
 {
-	//do nothing.
+	sheet.clear();
 }
 
 Spreadsheet::Spreadsheet(string filename)
 {
   ss_name = filename;
+  sheet.clear();
 }
 
 Spreadsheet::~Spreadsheet()
@@ -65,6 +66,7 @@ bool Spreadsheet::containsUser(int ID)
     return false;
 }
 
+//fix removing from vectur during iteration.
 void Spreadsheet::removeUser(int socket)
 {
   for(vector<user>::iterator it = userList.begin(); it != userList.end(); ++it) 
@@ -76,7 +78,7 @@ void Spreadsheet::removeUser(int socket)
 
 string Spreadsheet::GetCellContents(string name)
 {
-  name = normalize(name);
+  //name = normalize(name);
   for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
     {
       if(it->first == name)
@@ -97,27 +99,37 @@ vector<string> Spreadsheet::GetNamesOfAllNonemptyCells()
 
 void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 {
-  name = normalize(name);
-  content = normalize(content);
+ // name = normalize(name);
+ // content = normalize(content);
+  string copy ="";
   if(name == "")
     {
       vector<string> blankGraph;
       graph.ReplaceDependents(name, blankGraph);
     }
-  
+	cout<<"Checkpoint 1"<<endl;
   if(isUndo == false)
     {
-      string copy;
-     for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
-	{
-	  if(it->first == name)
-	    {
-	      copy = it->second;
-	      vector<string> blankVector;
-	      graph.ReplaceDependents(name, blankVector);
-	    }
-	  sheet[name] = content;
-	}
+	 if(sheet.size() != 0)
+	 {
+		cout<<"Checkpoint 1.25"<<endl;
+		for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
+		{
+			if(it->first == name)
+			{
+			copy = it->second;
+			vector<string> blankVector;
+			cout<<"Checkpoint 1.5"<<endl;
+			graph.ReplaceDependents(name, blankVector);
+			cout<<"Checkpoint 1.75"<<endl;
+			}
+		}
+	 }
+	 cout<<"Checkpoint 1.99"<<endl;
+	 cout<<name<<endl;
+	 cout<<content<<endl;
+	 sheet[name] = content;
+	 cout<<"Checkpoint 2"<<endl;
       // Check to see if formula
       if(content[0] == '=')
 	{
@@ -127,7 +139,7 @@ void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 	      graph.AddDependency(name, variables[i]);
 	    }
 	}
-
+	cout<<"Checkpoint 3"<<endl;
       try
 	{
 	  GetCellsToRecalculate(name);
@@ -135,9 +147,11 @@ void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 	  newChange.name = name;
 	  newChange.content = content;
 	  undoList.push(newChange);
+	  	cout<<"Checkpoint 4"<<endl;
 	}
       catch(CircularException e)
 	{
+			cout<<"Checkpoint 5"<<endl;
 	  SetContentsOfCell(name, copy, isUndo);
 	  throw e;
 	}
@@ -146,12 +160,14 @@ void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 
 vector<string> Spreadsheet::GetDirectDependents(string name)
 {
+		cout<<"Checkpoint 6"<<endl;
 	return graph.GetDependents(name);
 }
 
 vector<string> Spreadsheet::GetCellsToRecalculate(string name)
 {
 	vector<string> new_list (1,name);
+		cout<<"Checkpoint 7"<<endl;
 	return GetCellsToRecalculate(new_list);
 }
 
@@ -189,6 +205,7 @@ vector<string> Spreadsheet::GetCellsToRecalculate(vector<string> names)
 	vector<string> changed;
 	vector<string> visited;
 	vector<string> my_return;
+		cout<<"Checkpoint 8"<<endl;
 	for(int i = 0; i < names.size(); i++)
 	{
 		bool is_visited = false;
@@ -201,11 +218,13 @@ vector<string> Spreadsheet::GetCellsToRecalculate(vector<string> names)
 		if(!is_visited)
 			Visit(names[i], names[i], visited, changed);
 	}
+		cout<<"Checkpoint 9"<<endl;
 	//reverse the order of the vector here
-	for(int i = (changed.size()-1); i >= 0; i--)
+	for(int i = changed.size()-1; i >= 0; i--)
 	{
 		my_return.push_back(changed[i]);
 	}
+		cout<<"Checkpoint 10"<<endl;
 	return my_return;
 }
 
@@ -213,7 +232,7 @@ void Spreadsheet::Visit(string start, string name, vector<string>& visited, vect
 {
 	visited.push_back(name);
 	vector<string> dependents = GetDirectDependents(name);
-	
+		cout<<"Checkpoint 11"<<endl;
 	for(int i = 0; i < dependents.size(); i++)
 	{
 	  if(dependents[i] == start)
@@ -221,6 +240,7 @@ void Spreadsheet::Visit(string start, string name, vector<string>& visited, vect
 	  else
 	    Visit(start, dependents[i], visited, changed);
 	}
+		cout<<"Checkpoint 12"<<endl;
 	//needs to be push_front
 	changed.push_back(name);
 }
@@ -228,6 +248,7 @@ void Spreadsheet::Visit(string start, string name, vector<string>& visited, vect
 string Spreadsheet::normalize(string content)
 {
   locale loc;
+  cout<<"inside of normalize"<<endl;
   return toupper(content, loc);
 }
 
@@ -240,6 +261,7 @@ vector<string> Spreadsheet::getVariables(string content)
     {
 	  if((*it) != "0")
 		{
+		  cout<<"Checkpoint 13"<<endl;
 		  int value = atoi((*it).c_str());
 		  if(value == 0)
 			myReturn.push_back((*it));
