@@ -15,6 +15,7 @@ http://codebase.eu/source/code-cplusplus/multithreaded-socket-server/
 #include <cstdio>
 #include <cstdlib>
 #include "Spreadsheet.h"
+#include "CircularException.h"
 
 using namespace std;
 
@@ -222,7 +223,7 @@ void sendAll(int client, string message)
 		{
 			string cellTemp = msg.substr(5, msg.find_first_of(" ", 5));//cut off command
 			string cellName = cellTemp.substr(0, cellTemp.find_first_of(" "));//get cell name
-			stering cellContents = cellTemp.substr(cellTemp.find_first_of(" "), cellTemp.size()-1);//get cell contents
+			string cellContents = cellTemp.substr(cellTemp.find_first_of(" "), cellTemp.size()-1);//get cell contents
 			try
 			{
 				//try all the things
