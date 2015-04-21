@@ -247,9 +247,18 @@ void Spreadsheet::Visit(string start, string name, vector<string>& visited, vect
 
 string Spreadsheet::normalize(string content)
 {
+  string change;
   locale loc;
+<<<<<<< HEAD
   cout<<"inside of normalize"<<endl;
   return toupper(content, loc);
+=======
+  for(i = 0; i < content.length(); i++)
+  {
+	  change += toupper(content[i],loc);
+  }
+  return change;
+>>>>>>> origin/master
 }
 
 vector<string> Spreadsheet::getVariables(string content)
