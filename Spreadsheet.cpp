@@ -10,7 +10,7 @@ using namespace std;
 
 Spreadsheet::Spreadsheet()
 {
-	//do nuthing.
+	//do nothing.
 }
 
 Spreadsheet::Spreadsheet(string filename)
@@ -170,6 +170,7 @@ void Spreadsheet::Save()
 
 map<string,string> Spreadsheet::Open(string filename)
 {
+  ss_name = filename;
   ifstream stream;
   string name, contents;
   stream.open(filename.c_str());
@@ -237,12 +238,12 @@ vector<string> Spreadsheet::getVariables(string content)
   boost::split(strs, content, boost::is_any_of("-|+|/|*"));
   for (vector<string>::iterator it = strs.begin(); it != strs.end(); ++it) 
     {
-      if((*it) != "0")
-	{
-	  int value = atoi((*it).c_str());
-	  if(value == 0)
-	    myReturn.push_back((*it));
-	}
+	  if((*it) != "0")
+		{
+		  int value = atoi((*it).c_str());
+		  if(value == 0)
+			myReturn.push_back((*it));
+		}
     }
   /*for(int i = 0; i < strs.size(); i++)
   {
