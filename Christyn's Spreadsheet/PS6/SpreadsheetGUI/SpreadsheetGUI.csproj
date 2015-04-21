@@ -109,7 +109,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Documents\Visual Studio 2013\Projects\PS32\Formula\Formula.csproj">
+    <ProjectReference Include="..\Formula\Formula.csproj">
       <Project>{cbeb2a78-fba5-4e6a-aa34-783c52ab802f}</Project>
       <Name>Formula</Name>
     </ProjectReference>

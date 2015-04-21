@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSModel", "SSModel\SSModel.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StringSocket", "StringSocket\StringSocket.csproj", "{E1838F9A-BCCC-423D-A1C1-F11372AF78DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Formula", "..\..\..\..\..\Documents\Visual Studio 2013\Projects\PS32\Formula\Formula.csproj", "{CBEB2A78-FBA5-4E6A-AA34-783C52AB802F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Formula", "Formula\Formula.csproj", "{CBEB2A78-FBA5-4E6A-AA34-783C52AB802F}"
 EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
