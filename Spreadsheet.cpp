@@ -201,7 +201,7 @@ vector<string> Spreadsheet::GetCellsToRecalculate(vector<string> names)
 			Visit(names[i], names[i], visited, changed);
 	}
 	//reverse the order of the vector here
-	for(int i = 0; i < changed.size(); i++)
+	for(int i = changed.size()-1; i >= 0; i--;)
 	{
 		my_return.push_back(changed[i]);
 	}
