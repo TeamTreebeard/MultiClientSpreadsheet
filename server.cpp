@@ -223,23 +223,30 @@ void sendAll(int client, string message)
 		{
 			string cellTemp = msg.substr(5, msg.find_first_of(" ", 5));//cut off command
 			string cellName = cellTemp.substr(0, cellTemp.find_first_of(" "));//get cell name
-			string cellContents = cellTemp.substr(cellTemp.find_first_of(" "), cellTemp.size()-1);//get cell contents
+			string cellContents = cellTemp.substr(cellTemp.find_first_of(" ")+1, cellTemp.find_first_of("\n")-(cellTemp.find_first_of(" ")+1));//get cell contents
+			cout << "cellTEMP  == "<<cellTemp<<endl;
+			cout << "cellName  == "<<cellName<<endl;
+			cout << "cellContents  == "<<cellContents<<endl;
+			
+
 			try
 			{
 				//try all the things
 				findSS(client).SetContentsOfCell(cellName, cellContents, false);//find spreadsheet and call set cell contents
+				cout<<"Message to clients "<<msg<<endl;
 				sendAll(client, msg);//send change to all clients once change is verified
 			}
 			catch(CircularException e)//bad cell change
 			{
-				message = "error 1 cell change failed";//prepare error message
+				message = "error 1 cell change failed\n";//prepare error message
 				send(client,message);//send message to cell change requester 
 			}
 			cout<<"in cell"<<endl;
 		}
 		else if(command.compare("undo") == 0)
 		{
-			sendAll(client, "cell "+ findSS(client).undo());//how to send out change to all clients
+			message = "cell " + findSS(client).undo() + "\n";
+			sendAll(client, message);//how to send out change to all clients
 			cout<<"in undo"<<endl;
 		}
 		else if(command.compare("save") == 0)
