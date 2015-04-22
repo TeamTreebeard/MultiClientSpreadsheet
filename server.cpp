@@ -28,12 +28,15 @@ Returns Spreadsheet that a given socket/client belongs to.
 */
 Spreadsheet findSS(int client)
 {
+	cout<< "Did we find a spreadsheet?" <<endl;
 	for(int i=0; i < SpreadsheetList.size(); i++) // loop over all spreadsheets in vector
 	{
 		if(SpreadsheetList[i].containsUser(client))//check if the user is in the spreadsheet 
 		{
+			cout<< "Found One!" <<endl;
 			return SpreadsheetList[i];//if client socket id is found in the spreadsheet then the current spreadsheet is returned 
 		}
+		cout << "nope..." << endl;
 	}
 }
 
@@ -94,6 +97,7 @@ void sendAll(int client, string message)
 	
 		if(command.compare("connect")==0)
 		{
+			cout << "Connect Checkpoint 1" << endl;
 			string username = msg.substr(8, msg.find_first_of(" ", 8));
 			username = username.substr(0, username.find_first_of(" "));
 			bool exists = false;
@@ -107,6 +111,7 @@ void sendAll(int client, string message)
 			}
 			if(exists)
 			{
+				cout << "Connect Checkpoint 2" << endl;
 				// open spreadsheet
 				//create user and add to spreadsheet
 				string ssname = msg.substr(9+username.length(), msg.find("\n"));
@@ -119,6 +124,7 @@ void sendAll(int client, string message)
 					}
 				}
 				if(found){
+					cout << "Connect Checkpoint 3" << endl;
 				Spreadsheet SS;
 				map<string, string> sheet = SS.Open(ssname);
 				//get cell number and send cells to client
@@ -136,7 +142,9 @@ void sendAll(int client, string message)
 				}
 				}
 				else{
+				cout << "False Checkpoint 1" << endl;
 				Spreadsheet ss(ssname);
+				cout << "False Checkpoint 2" << endl;
 				user usr(username, client);
 				ss.addUser(usr);
 				SpreadsheetList.push_back(ss);
@@ -221,9 +229,9 @@ void sendAll(int client, string message)
 		*/
 		else if(command.compare("cell") == 0)
 		{
-			string cellTemp = msg.substr(5, msg.find_first_of(" ", 5));//cut off command
+			string cellTemp = msg.substr(5);//cut off command
 			string cellName = cellTemp.substr(0, cellTemp.find_first_of(" "));//get cell name
-			string cellContents = cellTemp.substr(cellTemp.find_first_of(" ")+1, cellTemp.find_first_of("\n")-(cellTemp.find_first_of(" ")+1));//get cell contents
+			string cellContents = cellTemp.substr(cellTemp.find_first_of(" ")+1, (cellTemp.find_first_of("\n")-(cellTemp.find_first_of(" ")+1)));//get cell contents
 			cout << "cellTEMP  == "<<cellTemp<<endl;
 			cout << "cellName  == "<<cellName<<endl;
 			cout << "cellContents  == "<<cellContents<<endl;
