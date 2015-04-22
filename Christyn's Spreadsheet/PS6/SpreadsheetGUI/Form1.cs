@@ -264,7 +264,6 @@ namespace SpreadsheetGUI
         {
             if (sp.Changed)
             {
-                model.saveSheet();
                 Close();
             }
             else
@@ -279,14 +278,7 @@ namespace SpreadsheetGUI
         /// <param name="e"></param>
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            if (sp.Changed)
-            {
-                model.saveSheet();
-            }
-            else
-            {
-                //just close
-            }
+            //no
         }
 
 

@@ -180,10 +180,5 @@ namespace SSModelNS
             Connect(h_name, t_port, u_name, s_name);
             //socket.BeginReceive(LineReceived, null);
         }
-
-        public void saveSheet()
-        {
-            socket.BeginSend("save\n", (e, o) => { }, socket);
-        }
     }
 }
