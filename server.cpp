@@ -133,7 +133,7 @@ void sendAll(int client, string message)
 						if(SpreadsheetList[i].getName() == ssname)
 						{
 							SpreadsheetList[i].addUser(usr);
-							map<string, string> sheet = SS.getSheet(ssname);
+							map<string, string> sheet = SpreadsheetList[i].getSheet(ssname);
 							int numberCells = sheet.size();
 							stringstream ss;
 							ss << numberCells;
