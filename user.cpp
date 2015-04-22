@@ -4,7 +4,7 @@
 user::user(std::string username, int socketIn)
 {
   name = username;
-  socket = socket;
+  socket = socketIn;
 }
 
 int user::getSocket()
