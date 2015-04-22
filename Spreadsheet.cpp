@@ -16,10 +16,7 @@ Spreadsheet::Spreadsheet()
 Spreadsheet::Spreadsheet(string filename)
 {
 	ss_name = filename;
-	sheet.clear();
 	cout << "Checkpoint 0.1" << endl;
-	sheet["A1"] = "5";
-	cout << "Checkpoint 0.2" << endl;
 }
 
 Spreadsheet::~Spreadsheet()
@@ -181,6 +178,7 @@ vector<string> Spreadsheet::GetCellsToRecalculate(string name)
 
 void Spreadsheet::Save()
 {
+	cout << "Checkpoint for Save" << endl;
   ofstream stream;
   string filename = "/SavedFiles" + ss_name + ".txt";
   stream.open(filename.c_str());
