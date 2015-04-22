@@ -117,7 +117,7 @@ void sendAll(int client, string message)
 			{
 				// open spreadsheet
 				//create user and add to spreadsheet
-				string ssname = msg.substr(9+username.length(), msg.find("\n")-1);
+				string ssname = msg.substr(9+username.length(), msg.find("\n"));
 				bool found = false;
 				for(int i = 0; i<SpreadsheetList.size(); i++)
 				{
@@ -153,6 +153,7 @@ void sendAll(int client, string message)
 					
 					if(fileExists(ssname))
 					{
+						cout << "The file exists" << endl;
 						Spreadsheet SS(ssname);
 						user usr(username, client);
 						SS.addUser(usr);
@@ -172,6 +173,7 @@ void sendAll(int client, string message)
 						for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
 						{
 							message = "cell " + it->first + " " + it->second + "\n"; 
+							cout << message << " == message" << endl;
 							send(client, message);
 						}
 					}
