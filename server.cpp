@@ -119,6 +119,7 @@ void sendAll(int client, string message)
 				//create user and add to spreadsheet
 				string ssname = msg.substr(9+username.length(), msg.find("\n"));
 				ssname = ssname.substr(0, ssname.length()-1);
+				cout<<ssname<< " spreadsheet name"<<endl;
 				bool found = false;
 				for(int i = 0; i<SpreadsheetList.size(); i++)
 				{
@@ -168,6 +169,7 @@ void sendAll(int client, string message)
 						string cells = ss.str();
 						
 						message = "connected " + cells + " \n";
+						cout<<message<<endl;
 						send(client, message);
 						
 						//send cells from spreadsheet to client

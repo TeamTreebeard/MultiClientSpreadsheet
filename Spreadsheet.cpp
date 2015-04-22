@@ -15,7 +15,7 @@ Spreadsheet::Spreadsheet()
 
 Spreadsheet::Spreadsheet(string filename)
 {
-	ss_name = filename;
+	ss_name = filename.substr(0, filename.size()-1);
 	cout << "Checkpoint 0.1" << endl;
 }
 
@@ -199,14 +199,16 @@ void Spreadsheet::Save()
 	
 }
 
-map<string,string> Spreadsheet::Open(string filename)
+map<string,string>& Spreadsheet::Open(string filename)
 {
-  ss_name = filename;
+  string fname=filename+".txt";
   ifstream stream;
   string name, contents;
-  stream.open(filename.c_str());
+  stream.open(fname.c_str());
   while(stream >> name >> contents)
     {
+		cout<<"In WHILE  "<<name<<endl;
+		cout<<contents<<endl;
       SetContentsOfCell(name, contents, false);
     }
   stream.close();

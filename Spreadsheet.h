@@ -155,7 +155,7 @@ class Spreadsheet
 	Looks for a .txt file in a relative path with the file name. Will then read
 	the file's contents and builds a new Spreadsheet.
 	*/
-	map<string,string> Open(string filename);
+	map<string,string>& Open(string filename);
 
 	private:
 	/*

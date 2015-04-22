@@ -12,6 +12,7 @@ namespace SSModelNS
     {
         private StringSocket socket;
         public Boolean connected;
+        private object locker = new object();
 
         public event Action ConnectionNotFoundEvent;
 
@@ -77,7 +78,10 @@ namespace SSModelNS
             else if (command == "cell")
             {
                 info = s.Substring(5);
-                updateCellEvent(info.Substring(0, info.IndexOf(" ")), info.Substring(info.IndexOf(" ")+1));
+                lock (locker)
+                {
+                    updateCellEvent(info.Substring(0, info.IndexOf(" ")), info.Substring(info.IndexOf(" ") + 1));
+                }
                 System.Diagnostics.Debug.Write(info);
             }
             else if (command == "error")
