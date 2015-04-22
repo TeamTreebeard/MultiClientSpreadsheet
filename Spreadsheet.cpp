@@ -100,6 +100,11 @@ vector<string> Spreadsheet::GetNamesOfAllNonemptyCells()
   return returnVector;
 }
 
+map<string,string> Spreadsheet::getSheet()
+{
+	return sheet;
+}
+
 void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 {
  // name = normalize(name);
