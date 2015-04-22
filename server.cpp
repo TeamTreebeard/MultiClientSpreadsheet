@@ -289,8 +289,9 @@ void sendAll(int client, string message)
 		}
 		else if(command.compare("save") == 0)
 		{
-			findSS(client).Save();
 			cout<<"in save"<<endl;
+			findSS(client).Save();
+			cout<<"saved"<<endl;
 		}	
 		
 		// Unlock
