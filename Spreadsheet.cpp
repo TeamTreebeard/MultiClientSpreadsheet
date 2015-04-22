@@ -15,7 +15,7 @@ Spreadsheet::Spreadsheet()
 
 Spreadsheet::Spreadsheet(string filename)
 {
-	ss_name = filename.substr(0, filename.size()-1);
+	ss_name = filename;
 	cout << "Checkpoint 0.1" << endl;
 }
 

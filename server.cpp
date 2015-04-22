@@ -118,6 +118,7 @@ void sendAll(int client, string message)
 				// open spreadsheet
 				//create user and add to spreadsheet
 				string ssname = msg.substr(9+username.length(), msg.find("\n"));
+				ssname = ssname.substr(0, ssname.length()-1);
 				bool found = false;
 				for(int i = 0; i<SpreadsheetList.size(); i++)
 				{
