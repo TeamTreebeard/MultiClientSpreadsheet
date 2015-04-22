@@ -81,26 +81,9 @@ void sendAll(int client, string message)
 		
 		if (numBytes <= 0)
         {
-			cout<<"Attempting to disconnect"<<endl;
-			Spreadsheet SS = findSS(client);
-			SS.Save();
-			cout<<"SS saved"<<endl;
-			SS.removeUser(client);
-			cout<<"user removed from SS"<<endl;
-			cout<<SS.getSocketList().size()<<endl;
-			if(SS.getSocketList().size() <= 0)
-			{
-				for(int i =0; i <SpreadsheetList.size(); i++)
-				{
-					if(SS.getName() == SpreadsheetList[i].getName())
-					{
-						SpreadsheetList.erase(SpreadsheetList.begin()+i);
-						cout<<"SPL erased from list"<<endl;
-					}
-				}
-			}
-			cout << "SpreadsheetList size "<<SpreadsheetList.size() << endl ;
-			close(client);
+            cout << "Client Disconnected." << endl ;
+			
+            close(client);
             pthread_exit(0);
         }
 		
@@ -142,12 +125,15 @@ void sendAll(int client, string message)
 				//create user and add to spreadsheet
 				string ssname = msg.substr(9+username.length(), msg.find("\n"));
 				ssname = ssname.substr(0, ssname.length()-1);
+				cout<<ssname<< " spreadsheet name"<<endl;
 				bool found = false;
 				for(int i = 0; i<SpreadsheetList.size(); i++)
 				{
+					cout<<"CHECKING ACTIVE NAMES   "<<SpreadsheetList[i].getName()<<endl;
 					if(SpreadsheetList[i].getName() == ssname)
 					{
 						found = true;
+						cout<<found<< "is true!!!"<<endl;
 					}
 				}
 				if(found){
@@ -156,6 +142,7 @@ void sendAll(int client, string message)
 					{
 						if(SpreadsheetList[i].getName() == ssname)
 						{
+							cout<<"are we not getting here?"<<endl;
 							SpreadsheetList[i].addUser(usr);
 							map<string, string> sheet = SpreadsheetList[i].getSheet();
 							int numberCells = sheet.size();
@@ -163,10 +150,12 @@ void sendAll(int client, string message)
 							ss << numberCells;
 							string cells = ss.str();
 							message = "connected " + cells + " \n";
+							cout<<message<<endl;
 							send(client, message);
 							for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
 							{
 								message = "cell " + it->first + " " + it->second + "\n"; 
+								cout<<message<<endl;
 								send(client, message);
 							}		
 						}
@@ -191,12 +180,14 @@ void sendAll(int client, string message)
 						string cells = ss.str();
 						
 						message = "connected " + cells + " \n";
+						cout<<message<<endl;
 						send(client, message);
 						
 						//send cells from spreadsheet to client
 						for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
 						{
-							message = "cell " + it->first + " " + it->second + "\n";
+							message = "cell " + it->first + " " + it->second + "\n"; 
+							cout << message << " == message" << endl;
 							send(client, message);
 						}
 					}
@@ -261,6 +252,7 @@ void sendAll(int client, string message)
 			{
 				//try all the things
 				findSS(client).SetContentsOfCell(cellName, cellContents, false);//find spreadsheet and call set cell contents
+				cout<<"Message to clients "<<msg<<endl;
 				sendAll(client, msg);//send change to all clients once change is verified
 			}
 			catch(CircularException e)//bad cell change
@@ -274,7 +266,14 @@ void sendAll(int client, string message)
 			message = "cell " + findSS(client).undo() + "\n";
 			sendAll(client, message);//how to send out change to all clients
 			cout<<"in undo"<<endl;
+		}
+		else if(command.compare("save\n") == 0)
+		{
+			cout<<"in save"<<endl;
+			findSS(client).Save();
+			cout<<"saved"<<endl;
 		}	
+		
 		// Unlock
 		pthread_mutex_unlock(&serverLock);
 	}
