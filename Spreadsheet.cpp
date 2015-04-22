@@ -10,15 +10,12 @@ using namespace std;
 
 Spreadsheet::Spreadsheet()
 {
-	sheet.clear();
-	cout << "Checkpoint 0.1" << endl;
-	sheet["A1"] = "5";
-	cout << "Checkpoint 0.2" << endl;
+
 }
 
 Spreadsheet::Spreadsheet(string filename)
 {
-  ss_name = filename;
+	ss_name = filename;
 	sheet.clear();
 	cout << "Checkpoint 0.1" << endl;
 	sheet["A1"] = "5";
