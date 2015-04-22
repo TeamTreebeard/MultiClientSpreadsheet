@@ -411,18 +411,24 @@ namespace SSModelNS
         /// <param name="result"></param>
         private void ReceivingCallback(IAsyncResult result)
         {
-
-            // gets count of bytes sent
-            int bytes = ss.EndReceive(result);
-
-            //get buffer where the data was written
-            byte[] buffer = (byte[])(result.AsyncState);
-
-            lock (receiveSync)
+            try
             {
-                // form string from bytes sent
-                incoming += encode.GetString(buffer, 0, bytes);
-                ProcessReceiveQueue();
+                // gets count of bytes sent
+                int bytes = ss.EndReceive(result);
+
+                //get buffer where the data was written
+                byte[] buffer = (byte[])(result.AsyncState);
+
+                lock (receiveSync)
+                {
+                    // form string from bytes sent
+                    incoming += encode.GetString(buffer, 0, bytes);
+                    ProcessReceiveQueue();
+
+                }
+            }
+            catch
+            {
 
             }
         }

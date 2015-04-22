@@ -397,8 +397,7 @@ namespace SpreadsheetGUI
         //Open connection window for user to input connection info
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form2 connect_form = new Form2(this);
-            connect_form.Show();
+            //This now does nothing
         }
 
         //set connection variables and then call 
@@ -409,6 +408,7 @@ namespace SpreadsheetGUI
             ssname = ss_name;
             int port = Convert.ToInt32(_port);
             model.Connect(IPaddress, port, name, ssname);
+            this.Text = ssname + " : " + name;
         }
 
         //sends command to model when CTRL+Z or the undo button is activated
@@ -426,6 +426,19 @@ namespace SpreadsheetGUI
         public void registerUser(string username)
         {
            model.registerUser(username);
+        }
+
+        private void connectToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Form2 connect_form = new Form2(this);
+            connect_form.Show();
+        }
+
+        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SSApplicationContext.getAppContext().RunForm(new Form1());
+            Close();
+
         }
     }
 }

@@ -43,8 +43,10 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.registerUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.connectToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,7 +63,7 @@
             // 
             // cellNameBox
             // 
-            this.cellNameBox.Location = new System.Drawing.Point(314, 4);
+            this.cellNameBox.Location = new System.Drawing.Point(336, 4);
             this.cellNameBox.Name = "cellNameBox";
             this.cellNameBox.ReadOnly = true;
             this.cellNameBox.Size = new System.Drawing.Size(100, 20);
@@ -69,7 +71,7 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(494, 4);
+            this.textBox2.Location = new System.Drawing.Point(516, 4);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(100, 20);
@@ -77,7 +79,7 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(655, 3);
+            this.textBox3.Location = new System.Drawing.Point(677, 3);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(100, 20);
             this.textBox3.TabIndex = 6;
@@ -85,7 +87,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(253, 7);
+            this.label1.Location = new System.Drawing.Point(275, 7);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(55, 13);
             this.label1.TabIndex = 7;
@@ -94,7 +96,7 @@
             // valueBox
             // 
             this.valueBox.AutoSize = true;
-            this.valueBox.Location = new System.Drawing.Point(420, 7);
+            this.valueBox.Location = new System.Drawing.Point(442, 7);
             this.valueBox.Name = "valueBox";
             this.valueBox.Size = new System.Drawing.Size(54, 13);
             this.valueBox.TabIndex = 8;
@@ -103,7 +105,7 @@
             // EditContentsBox
             // 
             this.EditContentsBox.AutoSize = true;
-            this.EditContentsBox.Location = new System.Drawing.Point(600, 7);
+            this.EditContentsBox.Location = new System.Drawing.Point(622, 7);
             this.EditContentsBox.Name = "EditContentsBox";
             this.EditContentsBox.Size = new System.Drawing.Size(49, 13);
             this.EditContentsBox.TabIndex = 9;
@@ -111,7 +113,7 @@
             // 
             // evaluate
             // 
-            this.evaluate.Location = new System.Drawing.Point(761, 3);
+            this.evaluate.Location = new System.Drawing.Point(783, 3);
             this.evaluate.Name = "evaluate";
             this.evaluate.Size = new System.Drawing.Size(42, 21);
             this.evaluate.TabIndex = 10;
@@ -131,14 +133,14 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -157,9 +159,12 @@
             // 
             // connectToolStripMenuItem
             // 
+            this.connectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.connectToolStripMenuItem1,
+            this.disconnectToolStripMenuItem});
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
-            this.connectToolStripMenuItem.Text = "Connect";
+            this.connectToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
+            this.connectToolStripMenuItem.Text = "Connection";
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
             // undoToolStripMenuItem
@@ -176,6 +181,20 @@
             this.registerUserToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
             this.registerUserToolStripMenuItem.Text = "Register User";
             this.registerUserToolStripMenuItem.Click += new System.EventHandler(this.registerUserToolStripMenuItem_Click);
+            // 
+            // connectToolStripMenuItem1
+            // 
+            this.connectToolStripMenuItem1.Name = "connectToolStripMenuItem1";
+            this.connectToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.connectToolStripMenuItem1.Text = "Connect";
+            this.connectToolStripMenuItem1.Click += new System.EventHandler(this.connectToolStripMenuItem1_Click);
+            // 
+            // disconnectToolStripMenuItem
+            // 
+            this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.disconnectToolStripMenuItem.Text = "Disconnect";
+            this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -221,6 +240,8 @@
         private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem registerUserToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
     }
 }
 
