@@ -12,7 +12,6 @@ namespace SSModelNS
     {
         private StringSocket socket;
         public Boolean connected;
-        private object locker = new object();
 
         public event Action ConnectionNotFoundEvent;
 

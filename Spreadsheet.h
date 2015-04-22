@@ -55,7 +55,7 @@ class Spreadsheet
 	void removeUser(int socket);
 
 	// 
-	map<string, string> getSheet();
+	map<string, string>& getSheet();
 
 	// Returns the name of the spreadsheet
 	string getName();

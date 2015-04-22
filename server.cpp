@@ -22,7 +22,6 @@ using namespace std;
 vector<Spreadsheet> SpreadsheetList;
 vector<string> userList;
 pthread_mutex_t serverLock = PTHREAD_MUTEX_INITIALIZER;
-
 /*
 Returns Spreadsheet that a given socket/client belongs to.
 */
@@ -57,6 +56,7 @@ void sendAll(int client, string message)
 	vector<int> socketList = findSS(client).getSocketList();
 	for(int i = 0; i < socketList.size(); i++)
 	{
+		cout<<"sending to all "<<socketList[i]<<endl;
 		send(socketList[i], message);
 	}
 }
@@ -123,9 +123,11 @@ void sendAll(int client, string message)
 				bool found = false;
 				for(int i = 0; i<SpreadsheetList.size(); i++)
 				{
+					cout<<"CHECKING ACTIVE NAMES   "<<SpreadsheetList[i].getName()<<endl;
 					if(SpreadsheetList[i].getName() == ssname)
 					{
 						found = true;
+						cout<<found<< "is true!!!"<<endl;
 					}
 				}
 				if(found){
@@ -134,6 +136,7 @@ void sendAll(int client, string message)
 					{
 						if(SpreadsheetList[i].getName() == ssname)
 						{
+							cout<<"are we not getting here?"<<endl;
 							SpreadsheetList[i].addUser(usr);
 							map<string, string> sheet = SpreadsheetList[i].getSheet();
 							int numberCells = sheet.size();
@@ -141,10 +144,12 @@ void sendAll(int client, string message)
 							ss << numberCells;
 							string cells = ss.str();
 							message = "connected " + cells + " \n";
+							cout<<message<<endl;
 							send(client, message);
 							for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
 							{
 								message = "cell " + it->first + " " + it->second + "\n"; 
+								cout<<message<<endl;
 								send(client, message);
 							}		
 						}
@@ -231,40 +236,6 @@ void sendAll(int client, string message)
 			}
 		}
 		
-		/***************HEMI*********************/
-		/*
-		*─────────────────────────────▄██▄
-		*─────────────────────────────▀███
-		*────────────────────────────────█
-		*───────────────▄▄▄▄▄────────────█
-		*──────────────▀▄────▀▄──────────█
-		*──────────▄▀▀▀▄─█▄▄▄▄█▄▄─▄▀▀▀▄──█
-		*─────────█──▄──█────────█───▄─█─█
-		*─────────▀▄───▄▀────────▀▄───▄▀─█
-		*──────────█▀▀▀────────────▀▀▀─█─█
-		*──────────█───────────────────█─█
-		*▄▀▄▄▀▄────█──▄█▀█▀█▀█▀█▀█▄────█─█
-		*█▒▒▒▒█────█──█████████████▄───█─█
-		*█▒▒▒▒█────█──██████████████▄──█─█
-		*█▒▒▒▒█────█───█████ ███ ████▄─█─█
-		*█▒▒▒▒█────█────████ ███ █████─█─█
-		*█▒▒▒▒█────█───█████ █ █ ████▀─█─█
-		*█▒▒▒▒█───██───██████   █████──█─█
-		*▀████▀──██▀█──█████████████▀──█▄█
-		*──██───██──▀█──█▄█▄█▄█▄█▄█▀──▄█▀
-		*──██──██────▀█─────────────▄▀▓█
-		*──██─██──────▀█▀▄▄▄▄▄▄▄▄▄▀▀▓▓▓█
-		*──████────────█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█
-		*──███─────────█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█
-		*──██──────────█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█
-		*──██──────────█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█
-		*──██─────────▐█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█
-		*──██────────▐█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█
-		*──██───────▐█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█▌
-		*──██──────▐█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█▌
-		*──██─────▐█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█▌
-		*──██────▐█▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█▌
-		*/
 		else if(command.compare("cell") == 0)
 		{
 			string cellTemp = msg.substr(5); //cut off command
@@ -276,7 +247,6 @@ void sendAll(int client, string message)
 				//try all the things
 				findSS(client).SetContentsOfCell(cellName, cellContents, false);//find spreadsheet and call set cell contents
 				cout<<"Message to clients "<<msg<<endl;
-				//msg = msg+"\n";
 				sendAll(client, msg);//send change to all clients once change is verified
 			}
 			catch(CircularException e)//bad cell change
@@ -284,7 +254,6 @@ void sendAll(int client, string message)
 				message = "error 1 cell change failed\n";//prepare error message
 				send(client,message);//send message to cell change requester 
 			}
-			cout<<"in cell"<<endl;
 		}
 		else if(command.compare("undo\n") == 0)
 		{

@@ -365,7 +365,7 @@ namespace SSModelNS
                         // Remove from queue
 
                             R_Requests temp = messagesToReceive.Dequeue();
-                            ThreadPool.QueueUserWorkItem((o) => temp.CB(line, null, temp.PL));
+                            temp.CB(line, null, temp.PL);
                             while ((index = incoming.IndexOf("\n")) >= 0)
                             {
                                 // Get the substring from the location of the newline.
@@ -381,7 +381,7 @@ namespace SSModelNS
                                     incoming = "";
                                 }
 
-                                ThreadPool.QueueUserWorkItem((o) => temp.CB(line, null, temp.PL));
+                                temp.CB(line, null, temp.PL);
                             }
 
                     }

@@ -65,34 +65,38 @@ namespace SpreadsheetGUI
             //display cellName box
             String temp = getSelectionName();
 
-            this.Invoke((MethodInvoker)delegate
+            if (this.IsHandleCreated)
             {
-                textBox3.Focus();    // puts cursor in editable contents box when the cell is selected so you can began entering formula
-            
-                cellNameBox.Text = temp;
 
-                //display cellValue box
-                object value = sp.GetCellValue(temp);
-                if (value is String || value is double)
+                this.Invoke((MethodInvoker)delegate
                 {
-                    textBox2.Text = value.ToString();
-                }
-                else
-                {
-                    FormulaError fe = (FormulaError)value;
-                    textBox2.Text = "FormulaError";
-                }
-                //display EDITABLE cell contents
-                object contents = sp.GetCellContents(temp);
-                if (contents is Formula)
-                {
-                    textBox3.Text = "=" + contents.ToString();
-                }
-                else
-                {
-                    textBox3.Text = contents.ToString();
-                }
-            });
+                    textBox3.Focus();    // puts cursor in editable contents box when the cell is selected so you can began entering formula
+
+                    cellNameBox.Text = temp;
+
+                    //display cellValue box
+                    object value = sp.GetCellValue(temp);
+                    if (value is String || value is double)
+                    {
+                        textBox2.Text = value.ToString();
+                    }
+                    else
+                    {
+                        FormulaError fe = (FormulaError)value;
+                        textBox2.Text = "FormulaError";
+                    }
+                    //display EDITABLE cell contents
+                    object contents = sp.GetCellContents(temp);
+                    if (contents is Formula)
+                    {
+                        textBox3.Text = "=" + contents.ToString();
+                    }
+                    else
+                    {
+                        textBox3.Text = contents.ToString();
+                    }
+                });
+            }
         }
 
 
