@@ -20,38 +20,46 @@ namespace SSModelNS
         public event Action<String> usedNameEvent;
 
         private Boolean registering = false;
+        private string h_name, u_name, s_name;
+        private int t_port;
 
         public SSModel()
         {
             socket = null;
             connected = false;
+            h_name = "";
+            t_port = -1;
+            u_name = "";
+            s_name = "";
         }
 
 
         public void Connect(string hostname, int port, string name, string ss_name)
         {
-            {
-                if (socket == null) // Assumes you are not connected to a server already.
-                {
-                    IPAddress ipaddress;
-                    if (IPAddress.TryParse(hostname, out ipaddress)) // See if the hostname is an IP
-                    {
-                        hostname = Dns.GetHostByAddress(ipaddress).HostName; // Overwrite hostname with the IP.
-                    }
-                    try
-                    {
-                        // Try to establish a connection through StringSocket.
-                        TcpClient client = new TcpClient(hostname, port);
-                        socket = new StringSocket(client.Client, ASCIIEncoding.Default);
-                        socket.BeginSend("connect " + name +" "+ ss_name + "\n", (e, p) => { }, null); // Send a protocol specified message to connect
-                        socket.BeginReceive(LineReceived, socket); // Wait for the server to respond with a match start protocol message.
-                    }
-                    catch (SocketException) // Could not connect to the server.
-                    {
-                        ConnectionNotFoundEvent();
-                    }
-                }
+            h_name = hostname;
+            t_port = port;
+            u_name = name;
+            s_name = ss_name;
 
+            if (socket == null) // Assumes you are not connected to a server already.
+            {
+                IPAddress ipaddress;
+                if (IPAddress.TryParse(hostname, out ipaddress)) // See if the hostname is an IP
+                {
+                    hostname = Dns.GetHostByAddress(ipaddress).HostName; // Overwrite hostname with the IP.
+                }
+                try
+                {
+                    // Try to establish a connection through StringSocket.
+                    TcpClient client = new TcpClient(hostname, port);
+                    socket = new StringSocket(client.Client, ASCIIEncoding.Default);
+                    socket.BeginSend("connect " + name +" "+ ss_name + "\n", (e, p) => { }, null); // Send a protocol specified message to connect
+                    socket.BeginReceive(LineReceived, socket); // Wait for the server to respond with a match start protocol message.
+                }
+                catch (SocketException) // Could not connect to the server.
+                {
+                    ConnectionNotFoundEvent();
+                }
             }
         }
         
@@ -114,6 +122,7 @@ namespace SSModelNS
                         if (!registering)
                         {
                             registerUser(s.Substring(8));
+                            return;
                         }
                         else
                         {
@@ -163,8 +172,13 @@ namespace SSModelNS
         public void registerUser(string name)
         {
             registering = true;
+            socket.BeginSend("connect sysadmin default\n", (e, o) => { }, socket);
             socket.BeginSend("register " + name + "\n", (e, o) => { }, socket);
-            socket.BeginReceive(LineReceived, null);
+            socket.Close();
+            socket = null;
+            connected = false;
+            Connect(h_name, t_port, u_name, s_name);
+            //socket.BeginReceive(LineReceived, null);
         }
     }
 }
