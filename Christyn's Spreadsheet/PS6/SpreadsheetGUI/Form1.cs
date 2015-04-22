@@ -80,7 +80,7 @@ namespace SpreadsheetGUI
                 else
                 {
                     FormulaError fe = (FormulaError)value;
-                    MessageBox.Show(fe.Reason);
+                    textBox2.Text = "FormulaError";
                 }
                 //display EDITABLE cell contents
                 object contents = sp.GetCellContents(temp);
@@ -168,7 +168,7 @@ namespace SpreadsheetGUI
             updateTextDisplays(spreadsheetPanel1);
 
             if (sp.GetCellValue(name) is FormulaError)
-                return;
+            //    return;
 
             foreach(String s in evaluateFormula)
             {
