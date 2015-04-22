@@ -36,5 +36,23 @@ namespace SpreadsheetGUI
             last_form.connection_settings(IPaddress, name, ssname, port);
             this.Close();
         }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if(checkBox1.Checked == true)
+            {
+                textBox1.Text = "lab1-??.eng.utah.edu";
+                textBox2.Text = "sysadmin";
+                textBox3.Text = "default";
+                textBox4.Text = "2120";
+            }
+            else
+            {
+                textBox1.Text = "";
+                textBox2.Text = "";
+                textBox3.Text = "";
+                textBox4.Text = "2000";
+            }
+        }
     }
 }
