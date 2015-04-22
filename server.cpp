@@ -216,7 +216,7 @@ void sendAll(int client, string message)
 				userList.push_back(username);
 				
 				ofstream stream;
-				string filename = "userList.txt";
+				string filename = "UserList/userList.txt";
 				stream.open(filename.c_str());
 				for(int i = 0; i<userList.size(); i++)
 				{
