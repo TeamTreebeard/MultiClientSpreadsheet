@@ -261,6 +261,7 @@ namespace SpreadsheetGUI
             if (sp.Changed)
             {
                 model.saveSheet();
+                Close();
             }
             else
             {

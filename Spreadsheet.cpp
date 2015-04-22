@@ -134,6 +134,7 @@ void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 	 cout<<name<<endl;
 	 cout<<content<<endl;
 	 sheet[name] = content;
+	 cout << sheet[name] << " test" << endl;
 	 cout<<"Checkpoint 2"<<endl;
       // Check to see if formula
       if(content[0] == '=')
@@ -160,7 +161,8 @@ void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 	  SetContentsOfCell(name, copy, isUndo);
 	  throw e;
 	}
-    }	
+    }
+	cout << sheet.size() << " sheet size" << endl;	
 }
 
 vector<string> Spreadsheet::GetDirectDependents(string name)
@@ -180,11 +182,18 @@ void Spreadsheet::Save()
 {
 	cout << "Checkpoint for Save" << endl;
   ofstream stream;
-  string filename = "/SavedFiles" + ss_name + ".txt";
+  cout<<ss_name<<endl;
+  
+  string filename = ss_name + ".txt";
   stream.open(filename.c_str());
+  cout << "Checkpoint 2 for Save" << endl;
+  cout << sheet.size() << " sheet size" << endl;
   for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
     {
-      stream << it->first << " "<< it->second << "\n";
+
+		string message = it->first + " " + it->second + "\n";
+		cout<<message<<endl;
+        stream << message;
     }
   stream.close();
 	

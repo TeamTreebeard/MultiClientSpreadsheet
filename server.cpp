@@ -26,7 +26,7 @@ pthread_mutex_t serverLock = PTHREAD_MUTEX_INITIALIZER;
 /*
 Returns Spreadsheet that a given socket/client belongs to.
 */
-Spreadsheet findSS(int client)
+Spreadsheet& findSS(int client)
 {
 	for(int i=0; i < SpreadsheetList.size(); i++) // loop over all spreadsheets in vector
 	{
@@ -216,7 +216,7 @@ void sendAll(int client, string message)
 				userList.push_back(username);
 				
 				ofstream stream;
-				string filename = "UserList/userList.txt";
+				string filename = "userList.txt";
 				stream.open(filename.c_str());
 				for(int i = 0; i<userList.size(); i++)
 				{
