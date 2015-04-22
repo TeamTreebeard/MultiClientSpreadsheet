@@ -168,7 +168,7 @@ namespace SpreadsheetGUI
             updateTextDisplays(spreadsheetPanel1);
 
             if (sp.GetCellValue(name) is FormulaError)
-            //    return;
+                return;
 
             foreach(String s in evaluateFormula)
             {

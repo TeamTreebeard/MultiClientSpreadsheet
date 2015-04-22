@@ -510,7 +510,7 @@ namespace SS
                     change = true;
                     return @return;
                 }
-                if (content.StartsWith("="))
+                else if (content.StartsWith("="))
                 {
                     content = content.Substring(1);
                     try
