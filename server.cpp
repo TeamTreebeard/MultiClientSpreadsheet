@@ -120,14 +120,20 @@ void sendAll(int client, string message)
 					}
 				}
 				if(found){
-					Spreadsheet SS(ssname);
-					map<string, string> sheet = SS.Open(ssname);
-					//get cell number and send cells to client
+					//Spreadsheet SS(ssname);
+					map<string, string> sheet = SS.getSheet(ssname);
 					int numberCells = sheet.size();
 					stringstream ss;
 					ss << numberCells;
 					string cells = ss.str();
-					cout<<"Cells == "<<cells<<endl;
+					user usr(username, client);
+					for(int i =0; i<SpreadsheetList.size(); i++)
+					{
+						if(SpreadsheetList[i].getName() == ssname)
+						{
+							SpreadsheetList[i].addUser(usr);
+						}
+					}
 					message = "connected " + cells + " \n";
 					send(client, message);
 					for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
