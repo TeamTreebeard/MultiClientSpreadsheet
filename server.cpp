@@ -37,6 +37,13 @@ Spreadsheet findSS(int client)
 	}
 }
 
+bool fileExists(string filename)
+{
+	string fname = filename+".txt";
+	ifstream ifile(fname.c_str());
+	return ifile;
+}
+
 //Sends messages to the client using their int socket identifier and the supplied message.
 int send(int sockt, string message)
 {
@@ -120,36 +127,62 @@ void sendAll(int client, string message)
 					}
 				}
 				if(found){
-					//Spreadsheet SS(ssname);
-					map<string, string> sheet = SS.getSheet(ssname);
-					int numberCells = sheet.size();
-					stringstream ss;
-					ss << numberCells;
-					string cells = ss.str();
 					user usr(username, client);
 					for(int i =0; i<SpreadsheetList.size(); i++)
 					{
 						if(SpreadsheetList[i].getName() == ssname)
 						{
 							SpreadsheetList[i].addUser(usr);
+							map<string, string> sheet = SS.getSheet(ssname);
+							int numberCells = sheet.size();
+							stringstream ss;
+							ss << numberCells;
+							string cells = ss.str();
+							message = "connected " + cells + " \n";
+							send(client, message);
+							for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
+							{
+								message = "cell " + it->first + " " + it->second + "\n"; 
+								send(client, message);
+							}		
 						}
 					}
-					message = "connected " + cells + " \n";
-					send(client, message);
-					for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
+				
+				}
+				else{	
+					
+					if(fileExists(ssname))
 					{
-						message = "cell " + it->first + " " + it->second + "\n"; 
+						Spreadsheet SS(ssname);
+						user usr(username, client);
+						SS.addUser(usr);
+						SpreadsheetList.push_back(SS);
+						map<string, string> sheet = SS.Open(ssname);
+
+						//convert int to string
+						int numberCells = sheet.size();
+						stringstream ss;
+						ss << numberCells;
+						string cells = ss.str();
+						
+						message = "connected " + cells + " \n";
+						send(client, message);
+						
+						//send cells from spreadsheet to client
+						for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
+						{
+							message = "cell " + it->first + " " + it->second + "\n"; 
+							send(client, message);
+						}
+					}
+					else{
+						Spreadsheet SS(ssname);
+						user usr(username, client);
+						SS.addUser(usr);
+						SpreadsheetList.push_back(SS);
+						message = "connected 0\n";
 						send(client, message);
 					}
-				}
-				else{
-					Spreadsheet ss(ssname);
-					cout<<"hi"<<endl;
-					user usr(username, client);
-					ss.addUser(usr);
-					SpreadsheetList.push_back(ss);
-					message = "connected 0\n";
-					send(client, message);
 				}
 			}
 			else
