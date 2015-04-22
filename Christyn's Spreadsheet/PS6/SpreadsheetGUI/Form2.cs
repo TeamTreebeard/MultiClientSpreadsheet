@@ -24,6 +24,7 @@ namespace SpreadsheetGUI
         {
             last_form = _form;
             InitializeComponent();
+            textBox4.Text = "2000";
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -41,8 +42,8 @@ namespace SpreadsheetGUI
             if(checkBox1.Checked == true)
             {
                 textBox1.Text = "lab1-??.eng.utah.edu";
-                textBox2.Text = "";
-                textBox3.Text = "";
+                textBox2.Text = "sysadmin";
+                textBox3.Text = "default";
                 textBox4.Text = "2120";
             }
             else
@@ -50,7 +51,7 @@ namespace SpreadsheetGUI
                 textBox1.Text = "";
                 textBox2.Text = "";
                 textBox3.Text = "";
-                textBox4.Text = "";
+                textBox4.Text = "2000";
             }
         }
     }
