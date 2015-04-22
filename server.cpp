@@ -122,13 +122,19 @@ void sendAll(int client, string message)
 			string username = msg.substr(8, msg.find_first_of(" ", 8));
 			username = username.substr(0, username.find_first_of(" "));
 			bool exists = false;
-			for(int k = 0; k<userList.size(); k++)
-			{
-				if(userList[k] == username)
+			if(username != "sysadmin"){
+				for(int k = 0; k<userList.size(); k++)
 				{
-					exists = true;
-					break;
+					if(userList[k] == username)
+					{
+						exists = true;
+						break;
+					}
 				}
+			}
+			else
+			{
+				exists = true;
 			}
 			if(exists)
 			{
