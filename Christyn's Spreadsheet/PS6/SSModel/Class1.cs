@@ -64,66 +64,72 @@ namespace SSModelNS
         //otherwise the client will ignore the string
         private void LineReceived(String s, Exception e, object p)
         {
-            String info = "";
-            String command = "";
+                String info = "";
+                String command = "";
 
-            command = s.Substring(0, s.IndexOf(" "));
-            if (command == "connected")
-            {
-                //don't really need to do anything with this info, but we have successfully connected to a SS so set identifier to true.
-                connected = true;
-                System.Diagnostics.Debug.Write(connected);
-
-            }
-            else if (command == "cell")
-            {
-                info = s.Substring(5);
-                lock (locker)
+                command = s.Substring(0, s.IndexOf(" "));
+                if (command == "connected")
                 {
-                    updateCellEvent(info.Substring(0, info.IndexOf(" ")), info.Substring(info.IndexOf(" ") + 1));
+                    info = s.Substring(10);
+                    //don't really need to do anything with this info, but we have successfully connected to a SS so set identifier to true.
+                    int receives = Convert.ToInt32(info);
+                    for (int i = 0; i < receives; i++)
+                    {
+                        socket.BeginReceive(LineReceived, null);
+                    }
+
+                    connected = true;
+                    return;
+
                 }
-                System.Diagnostics.Debug.Write(info);
-            }
-            else if (command == "error")
-            {
-                info = s.Substring(6, 1);
-                System.Diagnostics.Debug.Write(info);
-                if (Convert.ToInt32(info) == 0)
+                else if (command == "cell")
                 {
-                    //thanks for that SUPER HELPFUL ERROR - "General error"
+
+                    info = s.Substring(5);
+                    updateCellEvent(info.Substring(0, info.IndexOf(" ")), info.Substring(info.IndexOf(" ") + 1));
                     System.Diagnostics.Debug.Write(info);
                 }
-                else if(Convert.ToInt32(info) == 1)
+                else if (command == "error")
                 {
-                    cellErrorEvent(s.Substring(8));
-                }
-                else if (Convert.ToInt32(info) == 2)
-                {
-                    //thanks for ANOTHER SUPER HELPFUL ERROR - invalid command
-                }
-                else if (Convert.ToInt32(info) == 3)
-                {
-                    //can't perform in current state?
-                }
-                else if (Convert.ToInt32(info) == 4)
-                {
-                    if (!registering)
+                    info = s.Substring(6, 1);
+                    System.Diagnostics.Debug.Write(info);
+                    if (Convert.ToInt32(info) == 0)
                     {
-                        registerUser(s.Substring(8));
+                        //thanks for that SUPER HELPFUL ERROR - "General error"
+                        System.Diagnostics.Debug.Write(info);
                     }
-                    else
+                    else if (Convert.ToInt32(info) == 1)
                     {
-                        usedNameEvent(s.Substring(8));
-                        registering = false;
+                        cellErrorEvent(s.Substring(8));
                     }
-                    System.Diagnostics.Debug.Write("here we are!");
+                    else if (Convert.ToInt32(info) == 2)
+                    {
+                        //thanks for ANOTHER SUPER HELPFUL ERROR - invalid command
+                    }
+                    else if (Convert.ToInt32(info) == 3)
+                    {
+                        //can't perform in current state?
+                    }
+                    else if (Convert.ToInt32(info) == 4)
+                    {
+                        if (!registering)
+                        {
+                            registerUser(s.Substring(8));
+                        }
+                        else
+                        {
+                            usedNameEvent(s.Substring(8));
+                            registering = false;
+                        }
+                        System.Diagnostics.Debug.Write("here we are!");
+                    }
                 }
-            }
 
-            else
-            {
-                System.Diagnostics.Debug.Write(s);
-            }
+                else
+                {
+                    System.Diagnostics.Debug.Write(s);
+                }
+            
 
             socket.BeginReceive(LineReceived, null);
         }
