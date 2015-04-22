@@ -281,13 +281,13 @@ void sendAll(int client, string message)
 			}
 			cout<<"in cell"<<endl;
 		}
-		else if(command.compare("undo") == 0)
+		else if(command.compare("undo\n") == 0)
 		{
 			message = "cell " + findSS(client).undo() + "\n";
 			sendAll(client, message);//how to send out change to all clients
 			cout<<"in undo"<<endl;
 		}
-		else if(command.compare("save") == 0)
+		else if(command.compare("save\n") == 0)
 		{
 			cout<<"in save"<<endl;
 			findSS(client).Save();
