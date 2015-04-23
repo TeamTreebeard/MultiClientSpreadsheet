@@ -23,6 +23,28 @@ Spreadsheet::~Spreadsheet()
 	
 }
 
+/*
+* Copy constructor
+*/
+Spreadsheet::Spreadsheet (const Spreadsheet & other)
+{
+	this->ss_name = other.ss_name;
+	this->sheet = other.sheet;
+	this->undoList = other.undoList;
+	this->userList = other.userList;
+	this->graph = other.graph;
+}
+
+const Spreadsheet& Spreadsheet::operator= (const Spreadsheet & rhs)
+{
+	this->ss_name = rhs.ss_name;
+	this->sheet = rhs.sheet;
+	this->undoList = rhs.undoList;
+	this->userList = rhs.userList;
+	this->graph = rhs.graph;
+	return *this;
+}
+
 string Spreadsheet::undo()
 {
   
@@ -65,7 +87,7 @@ bool Spreadsheet::containsUser(int ID)
     return false;
 }
 
-//fix removing from vector during iteration.
+//removes a user from the spreadsheet
 void Spreadsheet::removeUser(int socket)
 {	
 	for(vector<user>::iterator it = userList.begin(); it!=userList.end();)

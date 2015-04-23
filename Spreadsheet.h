@@ -34,7 +34,14 @@ class Spreadsheet
 	Default destructor
 	*/
 	~Spreadsheet();
-	/*
+	
+	//copy constructor
+	Spreadsheet(const Spreadsheet & other);
+	
+	//
+	const Spreadsheet& operator= (const Spreadsheet & rhs);
+	
+		/*
 	If the name is null or invalid, throws an InvalidNameException.
 	Otherwise, returns the value (as opposed to the contents) of the
 	named cell.
@@ -167,6 +174,16 @@ class Spreadsheet
 	Keeps track of non-empty cells, key is name, value is contents
 	*/
 	map<string, string> sheet;
+	
+	// The name of the spreadsheet
+	string ss_name;
+	
+	// Holds all the user changes in the spreadsheet
+	std::stack<cell> undoList; 
+
+	// Holds all the users in the spreadsheet
+	std::vector<user> userList;
+	
 	/*
 	Helper function for GetCellsToRecalculate that does most all of the actual
 	computation required to return the correct set of cell names.
@@ -178,20 +195,11 @@ class Spreadsheet
 	*/
 	void Visit(string start, string name, vector<string>& visited, vector<string>& changed);
 
-	// Holds all the user changes in the spreadsheet
-	std::stack<cell> undoList; 
-
-	// Holds all the users in the spreadsheet
-	std::vector<user> userList;
-
 	// Normalizes the string provided 
 	string normalize(string content);
 
 	// Gets all the varibles in the given formula
 	vector<string> getVariables(string content);
-
-	// The name of the spreadsheet
-	string ss_name;
 	
 };
 
