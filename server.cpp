@@ -147,11 +147,9 @@ void sendAll(int client, string message)
 				bool found = false;
 				for(int i = 0; i<SpreadsheetList.size(); i++)
 				{
-					cout<<"CHECKING ACTIVE NAMES   "<<SpreadsheetList[i].getName()<<endl;
 					if(SpreadsheetList[i].getName() == ssname)
 					{
 						found = true;
-						cout<<found<< "is true!!!"<<endl;
 					}
 				}
 				if(found){
@@ -162,20 +160,27 @@ void sendAll(int client, string message)
 						{
 							cout<<"are we not getting here?"<<endl;
 							SpreadsheetList[i].addUser(usr);
-							map<string, string> sheet = SpreadsheetList[i].getSheet();
+							SpreadsheetList[i].Save();
+							map<string, string> sheet = SpreadsheetList[i].Open(ssname);
+
+							//convert int to string
 							int numberCells = sheet.size();
 							stringstream ss;
 							ss << numberCells;
 							string cells = ss.str();
+							
 							message = "connected " + cells + " \n";
 							cout<<message<<endl;
 							send(client, message);
+							
+							//send cells from spreadsheet to client
 							for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
 							{
 								message = "cell " + it->first + " " + it->second + "\n"; 
-								cout<<message<<endl;
+								cout << message << " == message" << endl;
 								send(client, message);
-							}		
+							}
+		
 						}
 					}
 				

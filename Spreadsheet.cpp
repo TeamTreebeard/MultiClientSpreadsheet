@@ -102,8 +102,9 @@ vector<string> Spreadsheet::GetNamesOfAllNonemptyCells()
   return returnVector;
 }
 
-map<string,string>& Spreadsheet::getSheet()
+map<string,string> Spreadsheet::getSheet()
 {
+	cout<<"Sheet size in getSheet "<<sheet.size()<<endl;
 	return sheet;
 }
 
@@ -192,10 +193,13 @@ map<string,string>& Spreadsheet::Open(string filename)
   while(stream >> name >> contents)
     {
 	  cout<<"OPENING "<<endl;
+	  cout<<name<<" Name for setcontentsofcell"<<endl;
+	  cout<<contents<<endl;
       SetContentsOfCell(name, contents, false);
     }
   stream.close();
-
+  cout<<ss_name<<" == "<<filename<<endl;
+  cout<<sheet.size()<<endl;
   return sheet;
 	
 }
