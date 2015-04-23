@@ -12,6 +12,11 @@ class Node
 	public:
 	Node();
 	~Node();
+  
+	//copy constructor
+	Node(const Node & other);
+	//operator= required to be implemented by copy constructor
+	const Node& operator= (const Node & rhs);
 	
 	void AddDependents(string s);
 	void AddDependees(string s);
@@ -32,6 +37,10 @@ class DependencyGraph
 	public:
 	DependencyGraph();
 	~DependencyGraph();
+	//copy constructor
+	DependencyGraph(const DependencyGraph & other);
+	//operator= required to be implemented by copy constructor
+	const DependencyGraph& operator= (const DependencyGraph & rhs);
 	int get_Size();
 	bool HasDependents(string s);
 	bool HasDependees(string s);

@@ -10,6 +10,20 @@ Node::~Node()
 {
 	
 }
+
+Node::Node (const Node & other)
+{
+	this->dependents = other.dependents;
+	this->dependees = other.dependees;
+}
+
+const Node& Node::operator= (const Node & rhs)
+{
+	this->dependents = rhs.dependents;
+	this->dependees = rhs.dependees;
+	return *this;
+}
+
 void Node::AddDependents(string s)
 {
 	bool exists = false;
@@ -100,6 +114,23 @@ DependencyGraph::DependencyGraph()
 DependencyGraph::~DependencyGraph()
 {
 	
+}
+
+DependencyGraph::DependencyGraph (const DependencyGraph & other)
+{
+	this->Size = other.Size;
+	this->node = other.node;
+	this->lookup = other.lookup;
+	this->pivot = other.pivot;
+}
+
+const DependencyGraph& DependencyGraph::operator= (const DependencyGraph & rhs)
+{
+	this->Size = other.Size;
+	this->node = other.node;
+	this->lookup = other.lookup;
+	this->pivot = other.pivot;
+	return *this;
 }
 int DependencyGraph::get_Size()
 {
