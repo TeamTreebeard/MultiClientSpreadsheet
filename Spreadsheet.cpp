@@ -10,17 +10,18 @@ using namespace std;
 
 Spreadsheet::Spreadsheet()
 {
-
+	cout<<"SS DEFAULT CONSTRUCTOR"<<endl;
 }
 
 Spreadsheet::Spreadsheet(string filename)
 {
 	ss_name = filename;
+	cout<<"SS CONSTRUCTOR"<<endl;
 }
 
 Spreadsheet::~Spreadsheet()
 {
-	
+	cout<<"SS DESTRUCTOR"<<endl;
 }
 
 /*
@@ -33,6 +34,7 @@ Spreadsheet::Spreadsheet (const Spreadsheet & other)
 	this->undoList = other.undoList;
 	this->userList = other.userList;
 	this->graph = other.graph;
+	cout<<"SS COPY CONSTRUCTOR"<<endl;
 }
 
 const Spreadsheet& Spreadsheet::operator= (const Spreadsheet & rhs)
@@ -42,6 +44,7 @@ const Spreadsheet& Spreadsheet::operator= (const Spreadsheet & rhs)
 	this->undoList = rhs.undoList;
 	this->userList = rhs.userList;
 	this->graph = rhs.graph;
+	cout<<"SS OP="<<endl;
 	return *this;
 }
 

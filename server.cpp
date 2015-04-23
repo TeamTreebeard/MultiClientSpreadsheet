@@ -83,19 +83,23 @@ void sendAll(int client, string message)
         {
             cout << "Client Disconnected." << endl ;
 			//Find the spreadsheet and save it
-			Spreadsheet temp = findSS(client);
-			temp.Save();
+			Spreadsheet * temp = &findSS(client);
+			temp->Save();
 			cout<<"before remove"<<endl;
-			temp.removeUser(client);
+			cout<<temp->getSocketList().size()<<endl;
+			temp->removeUser(client);
 			cout << "User Removed" << endl;
-			if(temp.getSocketList().size() == 0)
+			cout<<temp->getSocketList().size()<<endl;
+			if(temp->getSocketList().size() == 0)
 			{
 				for(int i = 0; i < SpreadsheetList.size(); i++)
 				{
-					if(SpreadsheetList[i].getName() == temp.getName())
+					if(SpreadsheetList[i].getName() == temp->getName())
 					{
-						cout << temp.getName() << " temp name" << endl;
+						cout << temp->getName() << " temp name" << endl;
+						cout<<SpreadsheetList.size()<<endl;
 						SpreadsheetList.erase(SpreadsheetList.begin() + i);
+						cout<<SpreadsheetList.size()<<endl;
 					}
 				}
 			}
@@ -161,7 +165,7 @@ void sendAll(int client, string message)
 							cout<<"are we not getting here?"<<endl;
 							SpreadsheetList[i].addUser(usr);
 							SpreadsheetList[i].Save();
-							map<string, string> sheet = SpreadsheetList[i].Open(ssname);
+							map<string, string> sheet = SpreadsheetList[i].getSheet();
 
 							//convert int to string
 							int numberCells = sheet.size();
@@ -170,7 +174,7 @@ void sendAll(int client, string message)
 							string cells = ss.str();
 							
 							message = "connected " + cells + " \n";
-							cout<<message<<endl;
+							cout<<message<< "sheet size"<<endl;
 							send(client, message);
 							
 							//send cells from spreadsheet to client
@@ -193,9 +197,8 @@ void sendAll(int client, string message)
 						Spreadsheet SS(ssname);
 						user usr(username, client);
 						SS.addUser(usr);
-						SpreadsheetList.push_back(SS);
 						map<string, string> sheet = SS.Open(ssname);
-
+						SpreadsheetList.push_back(SS);
 						//convert int to string
 						int numberCells = sheet.size();
 						stringstream ss;

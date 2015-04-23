@@ -1,5 +1,5 @@
 #include "DependencyGraph.h"
-
+#include <iostream>
 using namespace std;
 
 Node::Node()
@@ -110,6 +110,7 @@ bool Node::HasDependees()
 DependencyGraph::DependencyGraph()
 {
 	Size = 0;
+	cout<<"DG CONSTRUCTOR"<<endl;
 }
 DependencyGraph::~DependencyGraph()
 {
@@ -122,14 +123,16 @@ DependencyGraph::DependencyGraph (const DependencyGraph & other)
 	this->node = other.node;
 	this->lookup = other.lookup;
 	this->pivot = other.pivot;
+	cout<<"DG COPY CONSTRUCTOR"<<endl;
 }
 
 const DependencyGraph& DependencyGraph::operator= (const DependencyGraph & rhs)
 {
-	this->Size = other.Size;
-	this->node = other.node;
-	this->lookup = other.lookup;
-	this->pivot = other.pivot;
+	this->Size = rhs.Size;
+	this->node = rhs.node;
+	this->lookup = rhs.lookup;
+	this->pivot = rhs.pivot;
+	cout<<"DG OP= CONSTRUCTOR"<<endl;
 	return *this;
 }
 int DependencyGraph::get_Size()
