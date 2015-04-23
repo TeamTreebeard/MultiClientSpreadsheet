@@ -17,6 +17,8 @@ namespace SSModelNS
 
         public event Action<String, String> updateCellEvent;
         public event Action<String> cellErrorEvent;
+        public event Action<String> genericErrorEvent;
+        public event Action commandErrorEvent;
         public event Action<String> usedNameEvent;
 
         private Boolean registering = false;
@@ -103,6 +105,7 @@ namespace SSModelNS
                     if (Convert.ToInt32(info) == 0)
                     {
                         //thanks for that SUPER HELPFUL ERROR - "General error"
+                        genericErrorEvent(s.Substring(8));
                         System.Diagnostics.Debug.Write(info);
                     }
                     else if (Convert.ToInt32(info) == 1)
@@ -111,6 +114,7 @@ namespace SSModelNS
                     }
                     else if (Convert.ToInt32(info) == 2)
                     {
+                        commandErrorEvent();
                         //thanks for ANOTHER SUPER HELPFUL ERROR - invalid command
                     }
                     else if (Convert.ToInt32(info) == 3)
@@ -183,9 +187,16 @@ namespace SSModelNS
 
         public void closeSocket()
         {
-            socket.Close();
-            socket = null;
-            connected = false;
+            try
+            {
+                socket.Close();
+                socket = null;
+                connected = false;
+            }
+            catch
+            {
+
+            }
         }
     }
 }

@@ -41,6 +41,8 @@ namespace SpreadsheetGUI
 
             model.updateCellEvent += updateCell;
             model.cellErrorEvent += cellError;
+            model.genericErrorEvent += genericError;
+            model.commandErrorEvent += commandError;
             model.ConnectionNotFoundEvent += reconnect;
             model.usedNameEvent += nameInUse;
         }
@@ -166,7 +168,7 @@ namespace SpreadsheetGUI
             }
             catch (CircularException)
             {
-                MessageBox.Show("Your Formula is introducing a Circular Exception and has not been entered. Please check your Formula and try again.");
+                //MessageBox.Show("Your Formula is introducing a Circular Exception and has not been entered. Please check your Formula and try again.");
                 return;
             }
             updateTextDisplays(spreadsheetPanel1);
@@ -186,7 +188,17 @@ namespace SpreadsheetGUI
         //if error returned is was from attempting to add an invalid cell
         private void cellError(string error_message)
         {
-            MessageBox.Show("You PROBABLY introduced a Circular Dependency. But maybe not. But probably.");
+            MessageBox.Show("Invalid Cell Request: " + error_message);
+        }
+
+        private void genericError(string error_message)
+        {
+            MessageBox.Show("Generic Error: " + error_message);
+        }
+
+        private void commandError()
+        {
+            MessageBox.Show("Invalid Command Error: Client may be dammaged or server no longer accepts the request.");
         }
 
         /// <summary>
@@ -271,7 +283,6 @@ namespace SpreadsheetGUI
         /// <param name="e"></param>
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
             model.closeSocket();
             Close();
         }
