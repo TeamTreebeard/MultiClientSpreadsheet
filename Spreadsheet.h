@@ -54,8 +54,11 @@ class Spreadsheet
 	// Removes the specified user from the spreadsheet
 	void removeUser(int socket);
 
-	// 
+	// returns sheet
 	map<string, string> getSheet();
+	
+	//returns sheet size
+	int sheetSize();
 
 	// Returns the name of the spreadsheet
 	string getName();
