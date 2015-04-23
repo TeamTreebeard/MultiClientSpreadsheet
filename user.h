@@ -8,6 +8,11 @@ class user
  public: 
   user(std::string username, int socketIn);
   int getSocket();
+  //copy constructor
+  user(const user & other);
+	
+  //operator= required to be implemented by copy constructor
+  const user& operator= (const user & rhs);
 
  private:
   int socket;
