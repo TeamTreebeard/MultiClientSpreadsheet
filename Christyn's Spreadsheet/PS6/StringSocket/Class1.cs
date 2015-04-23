@@ -412,16 +412,23 @@ namespace SSModelNS
         private void ReceivingCallback(IAsyncResult result)
         {
             // gets count of bytes sent
-            int bytes = ss.EndReceive(result);
-
-            //get buffer where the data was written
-            byte[] buffer = (byte[])(result.AsyncState);
-
-            lock (receiveSync)
+            try
             {
-                // form string from bytes sent
-                incoming += encode.GetString(buffer, 0, bytes);
-                ProcessReceiveQueue();
+                int bytes = ss.EndReceive(result);
+
+                //get buffer where the data was written
+                byte[] buffer = (byte[])(result.AsyncState);
+
+                lock (receiveSync)
+                {
+                    // form string from bytes sent
+                    incoming += encode.GetString(buffer, 0, bytes);
+                    ProcessReceiveQueue();
+
+                }
+            }
+            catch(Exception)
+            {
 
             }
         }
@@ -455,7 +462,7 @@ namespace SSModelNS
             // Ensure incoming is empty .
             incoming = "";
 
-            // messagesToReceive.Clear(); ???
+            messagesToReceive.Clear();
             // Shutdown and Close the Socket
             ss.Shutdown(SocketShutdown.Both);
             ss.Close();

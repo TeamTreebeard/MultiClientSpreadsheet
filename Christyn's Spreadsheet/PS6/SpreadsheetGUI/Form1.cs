@@ -243,6 +243,12 @@ namespace SpreadsheetGUI
             row = getRow - 1;
         }
 
+        private void newForm()
+        {
+
+            Application.Run(new Form1());
+        }
+
         /// <summary>
         /// Opens a new, blank spreadsheet in a new window.
         /// </summary>
@@ -250,7 +256,10 @@ namespace SpreadsheetGUI
         /// <param name="e"></param>
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SSApplicationContext.getAppContext().RunForm(new Form1());
+            //SSApplicationContext.getAppContext().RunForm(new Form1());
+
+             System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ThreadStart(newForm));
+             t.Start();
         }
 
 
@@ -262,14 +271,9 @@ namespace SpreadsheetGUI
         /// <param name="e"></param>
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (sp.Changed)
-            {
-                Close();
-            }
-            else
-            {
-                Close();
-            }
+
+            model.closeSocket();
+            Close();
         }
 
         /// <summary>
@@ -278,7 +282,8 @@ namespace SpreadsheetGUI
         /// <param name="e"></param>
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            //no
+            model.closeSocket();
+
         }
 
 

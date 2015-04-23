@@ -180,5 +180,12 @@ namespace SSModelNS
             Connect(h_name, t_port, u_name, s_name);
             //socket.BeginReceive(LineReceived, null);
         }
+
+        public void closeSocket()
+        {
+            socket.Close();
+            socket = null;
+            connected = false;
+        }
     }
 }
