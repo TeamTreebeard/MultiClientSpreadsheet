@@ -108,11 +108,6 @@ map<string,string> Spreadsheet::getSheet()
 	return sheet;
 }
 
-int Spreadsheet::sheetSize()
-{
-	return sheet.size();
-}
-
 void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 {
  // name = normalize(name);

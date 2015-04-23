@@ -19,17 +19,17 @@ http://codebase.eu/source/code-cplusplus/multithreaded-socket-server/
 
 using namespace std;
 
-vector<Spreadsheet*> SpreadsheetList;
+vector<Spreadsheet> SpreadsheetList;
 vector<string> userList;
 pthread_mutex_t serverLock = PTHREAD_MUTEX_INITIALIZER;
 /*
 Returns Spreadsheet that a given socket/client belongs to.
 */
-Spreadsheet* findSS(int client)
+Spreadsheet& findSS(int client)
 {
 	for(int i=0; i < SpreadsheetList.size(); i++) // loop over all spreadsheets in vector
 	{
-		if(SpreadsheetList[i]->containsUser(client))//check if the user is in the spreadsheet 
+		if(SpreadsheetList[i].containsUser(client))//check if the user is in the spreadsheet 
 		{
 			return SpreadsheetList[i];//if client socket id is found in the spreadsheet then the current spreadsheet is returned 
 		}
@@ -53,7 +53,7 @@ int send(int sockt, string message)
 
 void sendAll(int client, string message)
 {
-	vector<int> socketList = findSS(client)->getSocketList();
+	vector<int> socketList = findSS(client).getSocketList();
 	for(int i = 0; i < socketList.size(); i++)
 	{
 		cout<<"sending to all "<<socketList[i]<<endl;
@@ -83,19 +83,18 @@ void sendAll(int client, string message)
         {
             cout << "Client Disconnected." << endl ;
 			//Find the spreadsheet and save it
-			Spreadsheet * temp = findSS(client);
-			cout << "before save." << endl ;
-			temp->Save();
+			Spreadsheet temp = findSS(client);
+			temp.Save();
 			cout<<"before remove"<<endl;
-			temp->removeUser(client);
+			temp.removeUser(client);
 			cout << "User Removed" << endl;
-			if(temp->getSocketList().size() == 0)
+			if(temp.getSocketList().size() == 0)
 			{
 				for(int i = 0; i < SpreadsheetList.size(); i++)
 				{
-					if(SpreadsheetList[i]->getName() == temp->getName())
+					if(SpreadsheetList[i].getName() == temp.getName())
 					{
-						cout << temp->getName() << " temp name" << endl;
+						cout << temp.getName() << " temp name" << endl;
 						SpreadsheetList.erase(SpreadsheetList.begin() + i);
 					}
 				}
@@ -148,7 +147,7 @@ void sendAll(int client, string message)
 				bool found = false;
 				for(int i = 0; i<SpreadsheetList.size(); i++)
 				{
-					if(SpreadsheetList[i]->getName() == ssname)
+					if(SpreadsheetList[i].getName() == ssname)
 					{
 						found = true;
 					}
@@ -157,12 +156,12 @@ void sendAll(int client, string message)
 					user usr(username, client);
 					for(int i =0; i<SpreadsheetList.size(); i++)
 					{
-						if(SpreadsheetList[i]->getName() == ssname)
+						if(SpreadsheetList[i].getName() == ssname)
 						{
 							cout<<"are we not getting here?"<<endl;
-							SpreadsheetList[i]->addUser(usr);
-							SpreadsheetList[i]->Save();
-							map<string, string> sheet = SpreadsheetList[i]->Open(ssname);
+							SpreadsheetList[i].addUser(usr);
+							SpreadsheetList[i].Save();
+							map<string, string> sheet = SpreadsheetList[i].Open(ssname);
 
 							//convert int to string
 							int numberCells = sheet.size();
@@ -191,12 +190,11 @@ void sendAll(int client, string message)
 					if(fileExists(ssname))
 					{
 						cout << "The file exists" << endl;
-						Spreadsheet SSt(ssname);
-						Spreadsheet* SS = &SSt;
+						Spreadsheet SS(ssname);
 						user usr(username, client);
-						SS->addUser(usr);
+						SS.addUser(usr);
 						SpreadsheetList.push_back(SS);
-						map<string, string> sheet = SS->Open(ssname);
+						map<string, string> sheet = SS.Open(ssname);
 
 						//convert int to string
 						int numberCells = sheet.size();
@@ -217,10 +215,9 @@ void sendAll(int client, string message)
 						}
 					}
 					else{
-						Spreadsheet SSt(ssname);
-						Spreadsheet* SS = &SSt;
+						Spreadsheet SS(ssname);
 						user usr(username, client);
-						SS->addUser(usr);
+						SS.addUser(usr);
 						SpreadsheetList.push_back(SS);
 						message = "connected 0\n";
 						send(client, message);
@@ -277,7 +274,7 @@ void sendAll(int client, string message)
 			try
 			{
 				//try all the things
-				findSS(client)->SetContentsOfCell(cellName, cellContents, false);//find spreadsheet and call set cell contents
+				findSS(client).SetContentsOfCell(cellName, cellContents, false);//find spreadsheet and call set cell contents
 				cout<<"Message to clients "<<msg<<endl;
 				sendAll(client, msg);//send change to all clients once change is verified
 			}
@@ -289,14 +286,14 @@ void sendAll(int client, string message)
 		}
 		else if(command.compare("undo\n") == 0)
 		{
-			message = "cell " + findSS(client)->undo() + "\n";
+			message = "cell " + findSS(client).undo() + "\n";
 			sendAll(client, message);//how to send out change to all clients
 			cout<<"in undo"<<endl;
 		}
 		else if(command.compare("save\n") == 0)
 		{
 			cout<<"in save"<<endl;
-			findSS(client)->Save();
+			findSS(client).Save();
 			cout<<"saved"<<endl;
 		}	
 		
