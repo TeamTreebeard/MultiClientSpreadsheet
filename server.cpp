@@ -160,7 +160,8 @@ void sendAll(int client, string message)
 						{
 							cout<<"are we not getting here?"<<endl;
 							SpreadsheetList[i].addUser(usr);
-							map<string, string> sheet = SpreadsheetList[i].getSheet();
+							SpreadsheetList[i].Save();
+							map<string, string> sheet = SpreadsheetList[i].Open(ssname);
 
 							//convert int to string
 							int numberCells = sheet.size();
