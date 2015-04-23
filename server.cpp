@@ -82,7 +82,24 @@ void sendAll(int client, string message)
 		if (numBytes <= 0)
         {
             cout << "Client Disconnected." << endl ;
-			
+			//Find the spreadsheet and save it
+			Spreadsheet temp = findSS(client);
+			temp.Save();
+			cout<<"before remove"<<endl;
+			temp.removeUser(client);
+			cout << "User Removed" << endl;
+			if(temp.getSocketList().size() == 0)
+			{
+				for(int i = 0; i < SpreadsheetList.size(); i++)
+				{
+					if(SpreadsheetList[i].getName() == temp.getName())
+					{
+						cout << temp.getName() << " temp name" << endl;
+						SpreadsheetList.erase(SpreadsheetList.begin() + i);
+					}
+				}
+			}
+			cout << "Done" << endl;
             close(client);
             pthread_exit(0);
         }
@@ -105,7 +122,8 @@ void sendAll(int client, string message)
 			string username = msg.substr(8, msg.find_first_of(" ", 8));
 			username = username.substr(0, username.find_first_of(" "));
 			bool exists = false;
-			if(username != "sysadmin"){
+			if(username != "sysadmin")
+			{
 				for(int k = 0; k<userList.size(); k++)
 				{
 					if(userList[k] == username)

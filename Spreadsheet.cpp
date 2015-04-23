@@ -65,14 +65,20 @@ bool Spreadsheet::containsUser(int ID)
     return false;
 }
 
-//fix removing from vectur during iteration.
+//fix removing from vector during iteration.
 void Spreadsheet::removeUser(int socket)
-{
-  for(vector<user>::iterator it = userList.begin(); it != userList.end(); ++it) 
-    {
-      if((*it).getSocket() == socket)
-	userList.erase(it);
-    }  
+{	
+	for(vector<user>::iterator it = userList.begin(); it!=userList.end();)
+	{
+		if((*it).getSocket() == socket)
+		{
+				it = userList.erase(it);			
+		}
+		else
+		{
+				it++;
+		}
+	}
 }
 
 string Spreadsheet::GetCellContents(string name)
@@ -125,8 +131,6 @@ void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 			}
 		}
 	 }
-	 cout<<name<<endl;
-	 cout<<content<<endl;
 	 sheet[name] = content;
       // Check to see if formula
       if(content[0] == '=')
@@ -166,16 +170,13 @@ vector<string> Spreadsheet::GetCellsToRecalculate(string name)
 
 void Spreadsheet::Save()
 {
-  ofstream stream;
-  cout<<ss_name<<endl;
-  
+  ofstream stream;  
   string filename = ss_name + ".txt";
   stream.open(filename.c_str());
   for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
     {
 
 		string message = it->first + " " + it->second + "\n";
-		cout<<message<<endl;
         stream << message;
     }
   stream.close();
@@ -190,8 +191,7 @@ map<string,string>& Spreadsheet::Open(string filename)
   stream.open(fname.c_str());
   while(stream >> name >> contents)
     {
-		cout<<"In WHILE  "<<name<<endl;
-		cout<<contents<<endl;
+	  cout<<"OPENING "<<endl;
       SetContentsOfCell(name, contents, false);
     }
   stream.close();
@@ -229,7 +229,6 @@ void Spreadsheet::Visit(string start, string name, vector<string>& visited, vect
 {
 	visited.push_back(name);
 	vector<string> dependents = GetDirectDependents(name);
-		cout<<"Checkpoint 11"<<endl;
 	for(int i = 0; i < dependents.size(); i++)
 	{
 	  if(dependents[i] == start)
@@ -237,7 +236,6 @@ void Spreadsheet::Visit(string start, string name, vector<string>& visited, vect
 	  else
 	    Visit(start, dependents[i], visited, changed);
 	}
-		cout<<"Checkpoint 12"<<endl;
 	//needs to be push_front
 	changed.push_back(name);
 }
@@ -262,20 +260,10 @@ vector<string> Spreadsheet::getVariables(string content)
     {
 	  if((*it) != "0")
 		{
-		  cout<<"Checkpoint 13"<<endl;
 		  int value = atoi((*it).c_str());
 		  if(value == 0)
 			myReturn.push_back((*it));
 		}
     }
-  /*for(int i = 0; i < strs.size(); i++)
-  {
-    if(strs[i] != "0")
-      {
-	int value = atoi(strs[i].c_str());
-	if(value == 0)
-	  myReturn.push_back(strs[i]);
-      }
-      }*/
   return myReturn;
 }

@@ -406,6 +406,7 @@ namespace SpreadsheetGUI
             ssname = ss_name;
             int port = Convert.ToInt32(_port);
             model.Connect(IPaddress, port, name, ssname);
+            Text = ssname + " : " + client_name;
         }
 
         //sends command to model when CTRL+Z or the undo button is activated
