@@ -209,7 +209,6 @@ void sendAll(int client, string message)
 						//send cells from spreadsheet to client
 						for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
 						{
-							findSS(client).SetContentsOfCell(it->first, it->second, false);
 							message = "cell " + it->first + " " + it->second + "\n"; 
 							cout << message << " == message" << endl;
 							send(client, message);
