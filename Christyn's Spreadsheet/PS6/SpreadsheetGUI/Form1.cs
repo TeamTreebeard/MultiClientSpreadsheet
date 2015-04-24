@@ -140,9 +140,13 @@ namespace SpreadsheetGUI
                 {
                     Formula send = new Formula(temp.ToUpper());
                     temp = send.ToString().Insert(0, "=");
-                    model.sendCell(name, send.ToString());
+                    model.sendCell(name, temp);
                 }
-                model.sendCell(name, temp);
+                else
+                {
+                    model.sendCell(name, temp);
+                }
+
 
             }
             catch (FormulaFormatException)

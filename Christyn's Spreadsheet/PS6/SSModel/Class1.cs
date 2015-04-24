@@ -160,6 +160,7 @@ namespace SSModelNS
 
             try
             {
+                System.Diagnostics.Debug.Write("Sending....");
                 socket.BeginSend("cell " + name + " " + contents + "\n", (e, o) => { }, socket);
                 socket.BeginReceive(LineReceived, null);
             }
