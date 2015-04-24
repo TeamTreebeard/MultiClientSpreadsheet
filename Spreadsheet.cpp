@@ -112,7 +112,6 @@ void Spreadsheet::removeUser(int socket)
 
 string Spreadsheet::GetCellContents(string name)
 {
-  //name = normalize(name);
   for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
     {
       if(it->first == name)
@@ -139,15 +138,8 @@ map<string,string> Spreadsheet::getSheet()
 
 bool Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 {
- // name = normalize(name);
- // content = normalize(content);
+  cout<<"Setting contents of Cell"<<endl;
   string copy ="";
-  if(name == "")
-    {
-	  cout<<"do we ever even get in here?"<<endl;
-      vector<string> blankGraph;
-      graph.ReplaceDependents(name, blankGraph);
-    }
   if(isUndo == false)
     {
 	 if(sheet.size() != 0)
@@ -277,17 +269,6 @@ map<string,string>& Spreadsheet::Open(string filename)
   stream.close();
   return sheet;
 	
-}
-
-string Spreadsheet::normalize(string content)
-{
-  string change;
-  locale loc;
-  for(int i = 0; i < content.length(); i++)
-  {
-	  change += toupper(content[i],loc);
-  }
-  return change;
 }
 
 vector<string> Spreadsheet::getVariables(string content)

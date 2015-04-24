@@ -20,6 +20,7 @@ namespace SSModelNS
         public event Action<String> genericErrorEvent;
         public event Action<String> commandErrorEvent;
         public event Action<String> usedNameEvent;
+        public event Action<String> noSpreadSheetEvent;
 
         private Boolean registering = false;
         private string h_name, u_name, s_name;
@@ -55,7 +56,7 @@ namespace SSModelNS
                     // Try to establish a connection through StringSocket.
                     TcpClient client = new TcpClient(hostname, port);
                     socket = new StringSocket(client.Client, ASCIIEncoding.Default);
-                    socket.BeginSend("connect " + name +" "+ ss_name + "\n", (e, p) => { }, null); // Send a protocol specified message to connect
+                    socket.BeginSend("connect " + name + " " + ss_name + "\n", (e, p) => { }, null); // Send a protocol specified message to connect
                     socket.BeginReceive(LineReceived, socket); // Wait for the server to respond with a match start protocol message.
                 }
                 catch (SocketException) // Could not connect to the server.
@@ -86,7 +87,7 @@ namespace SSModelNS
                     {
                         socket.BeginReceive(LineReceived, null);
                     }
-
+                    registering = false;
                     connected = true;
                     return;
 
@@ -116,7 +117,7 @@ namespace SSModelNS
                     }
                     else if (Convert.ToInt32(info) == 3)
                     {
-                        //can't perform in current state?
+                        noSpreadSheetEvent(s.Substring(8));
                     }
                     else if (Convert.ToInt32(info) == 4)
                     {
@@ -172,9 +173,8 @@ namespace SSModelNS
 
         public void registerUser(string name) {
             try { 
-            registering = true;
             socket.BeginSend("connect sysadmin default\n", (e, o) => { }, socket);
-            socket.BeginSend("register " + name + "\n", (e, o) => { }, socket);
+            socket.BeginSend("register " +name+ "\n", (e, o) => { }, socket);
             registering = true;
             socket.Close();
             socket = null;

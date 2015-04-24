@@ -45,11 +45,18 @@ namespace SpreadsheetGUI
             model.commandErrorEvent += commandError;
             model.ConnectionNotFoundEvent += reconnect;
             model.usedNameEvent += nameInUse;
+            model.noSpreadSheetEvent += noSS;
+        }
+
+        private void noSS(string obj)
+        {
+            Text = "Spreadsheet Form";
+            MessageBox.Show("Unable to perform command in current state: "+obj);
         }
 
         private void nameInUse(string obj)
         {
-            MessageBox.Show(obj+" is already registered.");
+            MessageBox.Show(obj+" is already registered or invalid.");
         }
 
         private void reconnect()
@@ -443,12 +450,6 @@ namespace SpreadsheetGUI
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             model.sendUndo();
-        }
-
-        private void registerUserToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form3 register_form = new Form3(this);
-            register_form.Show();
         }
 
         public void registerUser(string username)

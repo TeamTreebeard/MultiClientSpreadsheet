@@ -85,6 +85,7 @@ void sendAll(int client, string message)
 	
 	while(1) {
 	
+		cout<<"Back inside of while loop"<<endl;
 		// clear buffer
 		bzero(buffer,256);
 		
@@ -93,7 +94,7 @@ void sendAll(int client, string message)
 		
 		if (numBytes <= 0)
         {
-			if(hasSS(client)
+			if(hasSS(client))
 			{
 				cout << "Client Disconnected." << endl ;
 				
@@ -146,8 +147,31 @@ void sendAll(int client, string message)
 		}
 		if(command == "connect")
 		{
-			string username = msg.substr(8, msg.find_first_of(" ", 8));
-			username = username.substr(0, username.find_first_of(" "));
+			//username and spreadsheet name.
+			index = msg.find_first_of(" ", 8);
+			string username = "";
+			if(index > 0){
+				username = msg.substr(8, index);
+				index = username.find_first_of(" ");
+				if(index >0)
+				{
+					username = username.substr(0, index);
+				}
+				else
+				{
+					message = "error 0 connect syntax "+msg.substr(8)+"\n";
+					send(client, message);
+					pthread_mutex_unlock(&serverLock);
+					continue;
+				}
+			}
+			else
+			{
+				message = "error 0 connect syntax "+msg.substr(8)+"\n";
+				send(client, message);
+				pthread_mutex_unlock(&serverLock);
+				continue;
+			}
 			bool exists = false;
 			if(username != "sysadmin")
 			{
@@ -169,6 +193,13 @@ void sendAll(int client, string message)
 				// open spreadsheet
 				//create user and add to spreadsheet
 				string ssname = msg.substr(9+username.length(), msg.find("\n"));
+				if(ssname == "\n")
+				{
+					message = "error 2 "+msg.substr(8)+"\n";
+					send(client, message);
+					pthread_mutex_unlock(&serverLock);
+					continue;
+				}
 				ssname = ssname.substr(0, ssname.length()-1);
 				cout<<ssname<< " spreadsheet name"<<endl;
 				bool found = false;
@@ -256,11 +287,35 @@ void sendAll(int client, string message)
 				send(client, message);
 			}
 		}
+		else if(!hasSS(client))
+		{
+			message = "error 3 Client is not connected to spreadsheet.\n";
+			send(client, message);
+			pthread_mutex_unlock(&serverLock);
+			continue;
+		}
 		else if(command == "register")
 		{
 			//check if username exists 
-			string username = msg.substr(9, msg.find_first_of(" ", 9));
-			username = username.substr(0, username.find_first_of("\n"));
+
+			string username = "";
+			username = msg.substr(9);
+			cout<<msg<<"sdkjfsd"<<endl;
+			cout<<username<<"sdsdf"<<endl;
+			index = username.find_first_of("\n");
+			cout<<"index : "<<index<<endl;
+			if(index == 0)
+			{
+				cout<<"inside index "<<endl;
+				message = "error 0 Username not given.\n";
+				send(client, message);
+				pthread_mutex_unlock(&serverLock);
+				continue;
+			}
+			else
+			{
+				username = username.substr(0,index);
+			}
 			bool used = false;
 			for(int j = 0; j<userList.size(); j++)
 			{
@@ -290,7 +345,7 @@ void sendAll(int client, string message)
 				stream.close();
 			}
 		}
-		
+			
 		else if(command == string("cell"))
 		{
 			cout<<"inside of cell"<<endl;
@@ -319,15 +374,7 @@ void sendAll(int client, string message)
 				cout<<"sending back to client: "<<message<<endl;
 				sendAll(client, message);//how to send out change to all clients
 			}
-
-		}
-		else if(command == "save\n")
-		{
-			cout<<"in save"<<endl;
-			findSS(client).Save();
-			cout<<"saved"<<endl;
 		}	
-		
 		else
 		{
 			message = "error 2 " + msg + "\n";

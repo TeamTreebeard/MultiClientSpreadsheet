@@ -146,9 +146,6 @@ class Spreadsheet
 	// Holds all the users in the spreadsheet
 	std::vector<user> userList;
 
-	// Normalizes the string provided 
-	string normalize(string content);
-
 	// Gets all the varibles in the given formula
 	vector<string> getVariables(string content);
 	
