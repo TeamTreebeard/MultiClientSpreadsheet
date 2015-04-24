@@ -433,6 +433,7 @@ namespace SpreadsheetGUI
                 }
                 catch(Exception)
                 {
+                    MessageBox.Show("Failed to connect.");
                     return;
                 }
             }

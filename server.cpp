@@ -36,6 +36,18 @@ Spreadsheet& findSS(int client)
 	}
 }
 
+bool hasSS(int client)
+{
+	for(int i=0; i < SpreadsheetList.size(); i++) // loop over all spreadsheets in vector
+	{
+		if(SpreadsheetList[i].containsUser(client))//check if the user is in the spreadsheet 
+		{
+			return true;//if client socket id is found in the spreadsheet then the current spreadsheet is returned 
+		}
+	}
+	return false;
+}
+
 bool fileExists(string filename)
 {
 	string fname = filename+".txt";
@@ -81,24 +93,27 @@ void sendAll(int client, string message)
 		
 		if (numBytes <= 0)
         {
-            cout << "Client Disconnected." << endl ;
-			//Find the spreadsheet and save it
-			Spreadsheet * temp = &findSS(client);
-			temp->Save();
-			cout<<temp->getSocketList().size()<<endl;
-			temp->removeUser(client);
-			cout<<temp->getSocketList().size()<<endl;
-			if(temp->getSocketList().size() == 0)
+			if(hasSS(client)
 			{
-				for(int i = 0; i < SpreadsheetList.size(); i++)
+				cout << "Client Disconnected." << endl ;
+				
+				//Find the spreadsheet and save it
+				Spreadsheet * temp = &findSS(client);
+				temp->Save();
+				temp->removeUser(client);
+				if(temp->getSocketList().size() == 0)
 				{
-					if(SpreadsheetList[i].getName() == temp->getName())
+					for(int i = 0; i < SpreadsheetList.size(); i++)
 					{
-						SpreadsheetList.erase(SpreadsheetList.begin() + i);
+						if(SpreadsheetList[i].getName() == temp->getName())
+						{
+							SpreadsheetList.erase(SpreadsheetList.begin() + i);
+						}
 					}
 				}
+				cout << "Done" << endl;
 			}
-			cout << "Done" << endl;
+			//close socket and end thread for client
             close(client);
             pthread_exit(0);
         }

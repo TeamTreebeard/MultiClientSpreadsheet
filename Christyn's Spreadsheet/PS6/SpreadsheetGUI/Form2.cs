@@ -28,6 +28,11 @@ namespace SpreadsheetGUI
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (textBox2.Text.Contains(" "))
+            {
+                MessageBox.Show("Usernames may not contain spaces");
+                return;
+            }
             IPaddress = textBox1.Text;
             name = textBox2.Text;
             ssname = textBox3.Text;
