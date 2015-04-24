@@ -133,7 +133,7 @@ map<string,string> Spreadsheet::getSheet()
 	return sheet;
 }
 
-void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
+bool Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 {
  // name = normalize(name);
  // content = normalize(content);
@@ -151,9 +151,9 @@ void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 		{
 			if(it->first == name)
 			{
-			copy = it->second;
-			vector<string> blankVector;
-			graph.ReplaceDependents(name, blankVector);
+				copy = it->second;
+				vector<string> blankVector;
+				graph.ReplaceDependents(name, blankVector);
 			}
 		}
 	 }
@@ -164,34 +164,69 @@ void Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 	  vector<string> variables = getVariables(content);
 	  for(int i = 0; i < variables.size(); i++)
 	    {
+			cout << "AddDependency(" << variables[i] << ")" << endl;
 	      graph.AddDependency(name, variables[i]);
 	    }
 	}
       try
 	{
-	  GetCellsToRecalculate(name);
-	  cell newChange;
-	  newChange.name = name;
-	  newChange.content = content;
-	  undoList.push(newChange);
+		cout << "CircularCheck(" << name << ")" << endl;
+		 CircularCheck(name);
+		 cell newChange;
+		 newChange.name = name;
+		 newChange.content = content;
+		 undoList.push(newChange);
+		 return false;
 	}
       catch(CircularException e)
 	{
 	  SetContentsOfCell(name, copy, isUndo);
-	  throw e;
+	  return true;
 	}
     }
 }
 
-vector<string> Spreadsheet::GetDirectDependents(string name)
+void Spreadsheet::CircularCheck(string name)
 {
-	return graph.GetDependents(name);
+	vector<string> cell_list;
+	GetAllDependents(name, cell_list);
+	
+	for(int i = 0; i < cell_list.size(); i++)
+	{
+		cout << cell_list[i] << " : Cell List" << endl;
+		if(cell_list[i] == name)
+		{
+			cout << "CircularException Here" << endl;
+			throw CircularException();
+		}
+	}
+	
+	return;
 }
 
-vector<string> Spreadsheet::GetCellsToRecalculate(string name)
+void Spreadsheet::GetAllDependents(string name, vector<string>& cell_list)
 {
-	vector<string> new_list (1,name);
-	return GetCellsToRecalculate(new_list);
+	vector<string> depend_list;
+	depend_list = graph.GetDependents(name);
+	bool exists;
+	for(int i = 0; i < depend_list.size(); i++)
+	{
+		exists = false;
+		for(int j = 0; j < cell_list.size(); j++)
+		{
+			if(cell_list[j] == depend_list[i])
+			{
+				exists = true;
+			}
+		}
+		if(!exists)
+		{
+			cout << depend_list[i] << " : Depend List" << endl;
+			cell_list.push_back(depend_list[i]);
+			GetAllDependents(depend_list[i], cell_list);	
+		}
+	}
+	return;
 }
 
 void Spreadsheet::Save()
@@ -229,46 +264,6 @@ map<string,string>& Spreadsheet::Open(string filename)
 	
 }
 
-vector<string> Spreadsheet::GetCellsToRecalculate(vector<string> names)
-{
-	vector<string> changed;
-	vector<string> visited;
-	vector<string> my_return;
-	for(int i = 0; i < names.size(); i++)
-	{
-		bool is_visited = false;
-		for(int j = 0; j < visited.size(); j++)
-		{
-			if(names[i] == visited[j])
-				is_visited = true;
-		}
-		
-		if(!is_visited)
-			Visit(names[i], names[i], visited, changed);
-	}
-	//reverse the order of the vector here
-	for(int i = changed.size()-1; i >= 0; i--)
-	{
-		my_return.push_back(changed[i]);
-	}
-	return my_return;
-}
-
-void Spreadsheet::Visit(string start, string name, vector<string>& visited, vector<string>& changed)
-{
-	visited.push_back(name);
-	vector<string> dependents = GetDirectDependents(name);
-	for(int i = 0; i < dependents.size(); i++)
-	{
-	  if(dependents[i] == start)
-	    throw CircularException();
-	  else
-	    Visit(start, dependents[i], visited, changed);
-	}
-	//needs to be push_front
-	changed.push_back(name);
-}
-
 string Spreadsheet::normalize(string content)
 {
   string change;
@@ -284,7 +279,7 @@ vector<string> Spreadsheet::getVariables(string content)
 {
   vector<string> strs;
   vector<string> myReturn;
-  boost::split(strs, content, boost::is_any_of("-|+|/|*"));
+  boost::split(strs, content, boost::is_any_of("-|+|/|*|="));
   for (vector<string>::iterator it = strs.begin(); it != strs.end(); ++it) 
     {
 	  if((*it) != "0")

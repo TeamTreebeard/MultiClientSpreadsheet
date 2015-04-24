@@ -110,48 +110,8 @@ class Spreadsheet
 	For example, if name is A1, B1 contains A1*2, and C1 contains B1+A1, the
 	set {A1, B1, C1} is returned.
 	*/
-	void SetContentsOfCell(string name, string content, bool isUndo);
-	/*
-	If name is null, throws an ArgumentNull Exception
-	
-	Otherwise, if name isn't a valid cell name, throws an InvalidNameException
-	
-	Otherwise, returns an vector, without duplicates, of the names of all
-	cells whose values depend directly on the values of the named cell. In
-	other words, returns an enumeration, without duplicates, of the names
-	of all cells that contain formulas containing name.
-	
-	For example, suppose that
-	A1 contains 3
-	B1 contains the formula A1 * A1
-	C1 contains the formula B1 + A1
-	D1 contains the formula B1 - C1
-	The direct dependents of A1 are B1 and C1
-	*/
-	vector<string> GetDirectDependents(string name);
-	/*
-	Requires that names be non-null. Also requires that if names contains s,
-	then s must be a valid non-null cell name.
-	
-	If any of the named cells are involved in a circular dependency,
-	throws a CircularException.
-	
-	Otherwise, returns an enumeration of the names of all cells whose values must 
-	be recalculated, assuming that the contents of each cell named in the names has changed.
-	The names are enumerated in the order in which the calculation should be done.
-	
-	For example, suppose that
-	A1 contains 5
-	B1 contains 7
-	C1 contains the formula A1 + B1
-	D1 contains the formula A1 * C1
-	E1 contains 15
-	
-	If A1 and B1 have changed, then A1, B1, C1, and D1 must be recalculated, 
-	and they must be recalculated in either the order A1,B1,C1,D1 or B1,A1,C1,D1.
-	The method will produce one of those enumerations.
-	*/
-	vector<string> GetCellsToRecalculate(string name);
+	bool SetContentsOfCell(string name, string content, bool isUndo);
+
 	/*
 	Creates a saved .txt file in a relative path that contains each non empty
 	cell name and the corresponding content to that cell so that when the file
@@ -183,17 +143,6 @@ class Spreadsheet
 
 	// Holds all the users in the spreadsheet
 	std::vector<user> userList;
-	
-	/*
-	Helper function for GetCellsToRecalculate that does most all of the actual
-	computation required to return the correct set of cell names.
-	*/
-	vector<string> GetCellsToRecalculate(vector<string> names);
-	/*
-	Helper function for the GetCellsToRecalculat that keeps track of which cells
-	have been visited already.
-	*/
-	void Visit(string start, string name, vector<string>& visited, vector<string>& changed);
 
 	// Normalizes the string provided 
 	string normalize(string content);
@@ -201,6 +150,10 @@ class Spreadsheet
 	// Gets all the varibles in the given formula
 	vector<string> getVariables(string content);
 	
+	private:
+	
+	void CircularCheck(string name);
+	void GetAllDependents(string name, vector<string>& cell_list);
 };
 
 

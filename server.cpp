@@ -273,17 +273,15 @@ void sendAll(int client, string message)
 			string cellTemp = msg.substr(5); //cut off command
 			string cellName = cellTemp.substr(0, cellTemp.find_first_of(" "));//get cell name
 			string cellContents = cellTemp.substr(cellTemp.find_first_of(" ")+1, (cellTemp.find_first_of("\n")-(cellTemp.find_first_of(" ")+1)));//get cell contents
-			
-			try
+				
+			bool circle = findSS(client).SetContentsOfCell(cellName, cellContents, false);//find spreadsheet and call set cell contents
+			cout<<"Message to clients "<<msg<<endl;
+			sendAll(client, msg);//send change to all clients once change is verified
+
+			if(circle)//bad cell change
 			{
-				//try all the things
-				findSS(client).SetContentsOfCell(cellName, cellContents, false);//find spreadsheet and call set cell contents
-				cout<<"Message to clients "<<msg<<endl;
-				sendAll(client, msg);//send change to all clients once change is verified
-			}
-			catch(CircularException e)//bad cell change
-			{
-				message = "error 1 cell change failed\n";//prepare error message
+				message = "error 1 Introduced a circular exception\n";//prepare error message
+				cout << message << endl;
 				send(client,message);//send message to cell change requester 
 			}
 		}
