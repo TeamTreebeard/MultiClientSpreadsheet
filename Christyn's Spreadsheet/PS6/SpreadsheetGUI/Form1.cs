@@ -209,7 +209,7 @@ namespace SpreadsheetGUI
 
         private void commandError(string error_message)
         {
-            MessageBox.Show("Invalid Command Error: Client may be dammaged or server no longer accepts the request. Request: " + error_message);
+            MessageBox.Show("Invalid Command Error: Client may be damaged or server no longer accepts the request. Request: " + error_message);
         }
 
         /// <summary>

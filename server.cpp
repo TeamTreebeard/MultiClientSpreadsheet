@@ -36,6 +36,19 @@ Spreadsheet& findSS(int client)
 	}
 }
 
+string normalize(string content)
+{
+  cout<<" in server "<<content<<endl;
+  string change;
+  locale loc;
+  for(int i = 0; i < content.length(); i++)
+  {
+	  change += toupper(content[i],loc);
+  }
+  cout<<" normalized "<<change<<endl;
+  return change;
+}
+
 bool hasSS(int client)
 {
 	for(int i=0; i < SpreadsheetList.size(); i++) // loop over all spreadsheets in vector
@@ -144,6 +157,10 @@ void sendAll(int client, string message)
 		string command = "";
 		if(index > 0){
 		 command = msg.substr(0, msg.find_first_of(" "));
+		}
+		else
+		{
+			command = msg.substr(0);
 		}
 		if(command == "connect")
 		{
@@ -348,21 +365,23 @@ void sendAll(int client, string message)
 			
 		else if(command == string("cell"))
 		{
-			cout<<"inside of cell"<<endl;
 			string cellTemp = msg.substr(5); //cut off command
-			cout<<cellTemp<<endl;
 			string cellName = cellTemp.substr(0, cellTemp.find_first_of(" "));//get cell name
-			cout<<cellName<<endl;
 			string cellContents = cellTemp.substr(cellTemp.find_first_of(" ")+1, (cellTemp.find_first_of("\n")-(cellTemp.find_first_of(" ")+1)));//get cell contents
+			cellName = normalize(cellName);
+			cellContents = normalize(cellContents);
 			bool circle = findSS(client).SetContentsOfCell(cellName, cellContents, false);//find spreadsheet and call set cell contents
 			cout<<"Message to clients "<<msg<<endl;
-			sendAll(client, msg);//send change to all clients once change is verified
-
 			if(circle)//bad cell change
 			{
 				message = "error 1 Introduced a circular exception\n";//prepare error message
 				cout << message << endl;
 				send(client,message);//send message to cell change requester 
+			}
+			else 
+			{
+				message = "cell " + cellName + " " + cellContents + "\n";
+				sendAll(client, message);//send change to all clients once change is verified
 			}
 		}
 		else if(command == "undo\n")
