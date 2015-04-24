@@ -296,7 +296,7 @@ void sendAll(int client, string message)
 		}
 		else if(command == "undo\n")
 		{
-			cout<<"undoing "<<msg<<endl
+			cout<<"undoing "<<msg<<endl;
 			if(findSS(client).canUndo()){
 				string test = findSS(client).undo();
 				message = "cell " + test + "\n";

@@ -50,16 +50,13 @@ const Spreadsheet& Spreadsheet::operator= (const Spreadsheet & rhs)
 
 string Spreadsheet::undo()
 {
-  undoList.pop();
-  cell lastChange = undoList.top();
-  undoList.pop();
-  cout<<lastChange.name<<" "<<lastChange.content<<" popped off this"<<endl;
-  string name = lastChange.name;
-  string content = lastChange.content;
-  SetContentsOfCell(name, content, true);
-  string change = name + " " +  content;
-  cout<<change<<" removing from undo"<<endl;
-  return change;
+	cell lastChange = undoList.top();
+	undoList.pop();
+	string name = lastChange.name;
+	string content = lastChange.content;
+	SetContentsOfCell(name, content, true);
+	string change = name + " " +  content;
+	return change;
 }
 
 bool Spreadsheet::canUndo()
@@ -147,6 +144,7 @@ bool Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
   string copy ="";
   if(name == "")
     {
+	  cout<<"do we ever even get in here?"<<endl;
       vector<string> blankGraph;
       graph.ReplaceDependents(name, blankGraph);
     }
@@ -164,33 +162,48 @@ bool Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 			}
 		}
 	 }
-	 sheet[name] = content;
-      // Check to see if formula
-      if(content[0] == '=')
-	{
-	  vector<string> variables = getVariables(content);
-	  for(int i = 0; i < variables.size(); i++)
-	    {
-	      graph.AddDependency(name, variables[i]);
-	    }
-	}
-      try
-	{
-		cout << "CircularCheck(" << name << ")" << endl;
-		 CircularCheck(name);
-		 cell newChange;
-		 newChange.name = name;
-		 newChange.content = content;
-		 cout<<name<<" "<<content<<" going into list"<<endl;
-		 undoList.push(newChange);
-		 return false;
-	}
-      catch(CircularException e)
-	{
-	  SetContentsOfCell(name, copy, isUndo);
-	  return true;
-	}
+		 sheet[name] = content;
+		  // Check to see if formula
+		  if(content[0] == '=')
+		{
+		  vector<string> variables = getVariables(content);
+		  for(int i = 0; i < variables.size(); i++)
+			{
+			  graph.AddDependency(name, variables[i]);
+			}
+		}
+		  try
+		{
+			 cout << "CircularCheck(" << name << ")" << endl;
+			 CircularCheck(name);
+			 cell newChange;
+			 newChange.name = name;
+			 newChange.content = copy;
+			 undoList.push(newChange);
+			 return false;
+		}
+		  catch(CircularException e)
+		{
+		  SetContentsOfCell(name, copy, true);
+		  return true;
+		}
     }
+	else
+	{
+		vector<string> blankVector;			
+		graph.ReplaceDependents(name, blankVector);
+	
+		sheet[name] = content;
+		// Check to see if formula
+		if(content[0] == '=')
+		{
+		  vector<string> variables = getVariables(content);
+		  for(int i = 0; i < variables.size(); i++)
+			{
+			  graph.AddDependency(name, variables[i]);
+			}
+		}	
+	}
 }
 
 void Spreadsheet::CircularCheck(string name)
@@ -259,14 +272,9 @@ map<string,string>& Spreadsheet::Open(string filename)
   stream.open(fname.c_str());
   while(stream >> name >> contents)
     {
-	  cout<<"OPENING "<<endl;
-	  cout<<name<<" Name for setcontentsofcell"<<endl;
-	  cout<<contents<<endl;
-      SetContentsOfCell(name, contents, false);
+      SetContentsOfCell(name, contents, true);
     }
   stream.close();
-  cout<<ss_name<<" == "<<filename<<endl;
-  cout<<sheet.size()<<endl;
   return sheet;
 	
 }
