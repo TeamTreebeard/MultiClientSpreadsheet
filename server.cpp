@@ -85,10 +85,8 @@ void sendAll(int client, string message)
 			//Find the spreadsheet and save it
 			Spreadsheet * temp = &findSS(client);
 			temp->Save();
-			cout<<"before remove"<<endl;
 			cout<<temp->getSocketList().size()<<endl;
 			temp->removeUser(client);
-			cout << "User Removed" << endl;
 			cout<<temp->getSocketList().size()<<endl;
 			if(temp->getSocketList().size() == 0)
 			{
@@ -96,10 +94,7 @@ void sendAll(int client, string message)
 				{
 					if(SpreadsheetList[i].getName() == temp->getName())
 					{
-						cout << temp->getName() << " temp name" << endl;
-						cout<<SpreadsheetList.size()<<endl;
 						SpreadsheetList.erase(SpreadsheetList.begin() + i);
-						cout<<SpreadsheetList.size()<<endl;
 					}
 				}
 			}
@@ -113,15 +108,27 @@ void sendAll(int client, string message)
 		
 		// Lock
 		pthread_mutex_lock(&serverLock);
-		
+		int num;
 		//do stuff with message
 		string msg = buffer;
+		string temp = "";
 		string message = "";
+		cout<<"Before loop"<<endl;
+		while((num = msg.find_first_of("\n")) == -1)
+		{
+			cout<<"in loop"<<endl;
+			numBytes = read(client, buffer, 256);
+			temp = buffer;
+			msg += temp;
+		}	
+		cout<<"msg after loop"<<msg<<"something off the end here"<<endl;
+		msg = msg.substr(0, msg.find_first_of("\n")+1);
+		cout<<"msg is set "<<msg<<endl;
 		string command = msg.substr(0, msg.find_first_of(" "));
-	
+		
 		cout<<command<<endl;
 	
-		if(command.compare("connect")==0)
+		if(command == "connect")
 		{
 			string username = msg.substr(8, msg.find_first_of(" ", 8));
 			username = username.substr(0, username.find_first_of(" "));
@@ -233,7 +240,7 @@ void sendAll(int client, string message)
 				send(client, message);
 			}
 		}
-		else if(command.compare("register") == 0)
+		else if(command == "register")
 		{
 			//check if username exists 
 			string username = msg.substr(9, msg.find_first_of(" ", 9));
@@ -268,12 +275,14 @@ void sendAll(int client, string message)
 			}
 		}
 		
-		else if(command.compare("cell") == 0)
+		else if(command == string("cell"))
 		{
+			cout<<"inside of cell"<<endl;
 			string cellTemp = msg.substr(5); //cut off command
+			cout<<cellTemp<<endl;
 			string cellName = cellTemp.substr(0, cellTemp.find_first_of(" "));//get cell name
+			cout<<cellName<<endl;
 			string cellContents = cellTemp.substr(cellTemp.find_first_of(" ")+1, (cellTemp.find_first_of("\n")-(cellTemp.find_first_of(" ")+1)));//get cell contents
-				
 			bool circle = findSS(client).SetContentsOfCell(cellName, cellContents, false);//find spreadsheet and call set cell contents
 			cout<<"Message to clients "<<msg<<endl;
 			sendAll(client, msg);//send change to all clients once change is verified
@@ -285,19 +294,22 @@ void sendAll(int client, string message)
 				send(client,message);//send message to cell change requester 
 			}
 		}
-		else if(command.compare("undo\n") == 0)
+		else if(command == "undo\n")
 		{
 			message = "cell " + findSS(client).undo() + "\n";
 			sendAll(client, message);//how to send out change to all clients
 			cout<<"in undo"<<endl;
 		}
-		else if(command.compare("save\n") == 0)
+		else if(command == "save\n")
 		{
 			cout<<"in save"<<endl;
 			findSS(client).Save();
 			cout<<"saved"<<endl;
 		}	
 		
+		else{
+			cout<<"no ifs"<<endl;
+		}
 		// Unlock
 		pthread_mutex_unlock(&serverLock);
 	}
