@@ -50,14 +50,20 @@ const Spreadsheet& Spreadsheet::operator= (const Spreadsheet & rhs)
 
 string Spreadsheet::undo()
 {
-  
-  cell lastChange = undoList.top();
-  undoList.pop();
-  string name = lastChange.name;
-  string content = lastChange.content;
-  SetContentsOfCell(name, content, true);
-  string change = name + " " +  content;
-  return change;
+  if(undoList.empty())
+  {
+	  undoList.pop();
+	  cell lastChange = undoList.top();
+	  undoList.pop();
+	  cout<<lastChange.name<<" "<<lastChange.content<<" popped off this add"<<endl;
+	  string name = lastChange.name;
+	  string content = lastChange.content;
+	  SetContentsOfCell(name, content, true);
+	  string change = name + " " +  content;
+	  cout<<change<<" removing from undo"<<endl;
+	  return change;
+  }
+  return "";
 }
 
 vector<int> Spreadsheet::getSocketList()
@@ -164,7 +170,6 @@ bool Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 	  vector<string> variables = getVariables(content);
 	  for(int i = 0; i < variables.size(); i++)
 	    {
-			cout << "AddDependency(" << variables[i] << ")" << endl;
 	      graph.AddDependency(name, variables[i]);
 	    }
 	}
@@ -175,6 +180,7 @@ bool Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 		 cell newChange;
 		 newChange.name = name;
 		 newChange.content = content;
+		 cout<<name<<" "<<content<<" going into list"<<endl;
 		 undoList.push(newChange);
 		 return false;
 	}

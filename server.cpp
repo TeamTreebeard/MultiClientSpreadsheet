@@ -296,9 +296,14 @@ void sendAll(int client, string message)
 		}
 		else if(command == "undo\n")
 		{
-			message = "cell " + findSS(client).undo() + "\n";
-			sendAll(client, message);//how to send out change to all clients
-			cout<<"in undo"<<endl;
+			cout<<"undoing "<<msg<<endl
+			string test = findSS(client).undo();
+			if(test != "")
+			{
+				message = "cell " + test + "\n";
+				cout<<"sending back to client: "<<message<<endl;
+				sendAll(client, message);//how to send out change to all clients
+			}
 		}
 		else if(command == "save\n")
 		{
