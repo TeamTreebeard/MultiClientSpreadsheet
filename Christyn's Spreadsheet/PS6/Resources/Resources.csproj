@@ -43,14 +43,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Iconka-Meow-2-Cat-laptop.ico" />
     <Content Include="Libraries\Formula.dll" />
     <Content Include="Libraries\Formula.XML" />
     <Content Include="Libraries\SpreadsheetPanel.dll" />
     <Content Include="Libraries\SpreadsheetPanel.XML" />
     <Content Include="Libraries\SpreadsheetUtilities.dll" />
     <Content Include="Libraries\SpreadsheetUtilities.XML" />
-    <Content Include="README.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

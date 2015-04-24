@@ -412,12 +412,26 @@ namespace SpreadsheetGUI
         //set connection variables and then call 
         public void connection_settings(string IP, string client_name, string ss_name, string _port)
         {
-            IPaddress = IP;
-            name = client_name;
-            ssname = ss_name;
-            int port = Convert.ToInt32(_port);
-            model.Connect(IPaddress, port, name, ssname);
-            Text = ssname + " : " + client_name;
+            if (IP == "" || client_name == "" || ss_name == "")
+            {
+                // values not filled
+            }
+            else
+            {
+                IPaddress = IP;
+                name = client_name;
+                ssname = ss_name;
+                try
+                {
+                    int port = Convert.ToInt32(_port);
+                    model.Connect(IPaddress, port, name, ssname);
+                    Text = ssname + " : " + client_name;
+                }
+                catch(Exception)
+                {
+                    return;
+                }
+            }
         }
 
         //sends command to model when CTRL+Z or the undo button is activated

@@ -96,17 +96,14 @@ namespace SSModelNS
 
                     info = s.Substring(5);
                     updateCellEvent(info.Substring(0, info.IndexOf(" ")), info.Substring(info.IndexOf(" ") + 1));
-                    System.Diagnostics.Debug.Write(info);
                 }
                 else if (command == "error")
                 {
                     info = s.Substring(6, 1);
-                    System.Diagnostics.Debug.Write(info);
                     if (Convert.ToInt32(info) == 0)
                     {
                         //thanks for that SUPER HELPFUL ERROR - "General error"
                         genericErrorEvent(s.Substring(8));
-                        System.Diagnostics.Debug.Write(info);
                     }
                     else if (Convert.ToInt32(info) == 1)
                     {
@@ -133,13 +130,12 @@ namespace SSModelNS
                             usedNameEvent(s.Substring(8));
                             registering = false;
                         }
-                        System.Diagnostics.Debug.Write("here we are!");
                     }
                 }
 
                 else
                 {
-                    System.Diagnostics.Debug.Write(s);
+
                 }
             
 
@@ -152,7 +148,7 @@ namespace SSModelNS
             {
                 socket.BeginSend("undo\n", (e, p) => { }, socket);
             }
-            catch(SocketException)
+            catch(Exception)
             {
                 // no undo should happen, we're probably not connected right now.
             }
@@ -167,22 +163,27 @@ namespace SSModelNS
                 socket.BeginSend("cell " + name + " " + contents + "\n", (e, o) => { }, socket);
                 socket.BeginReceive(LineReceived, null);
             }
-            catch(SocketException)
+            catch(Exception)
             {
                 //boop nothing
             }
         }
 
-        public void registerUser(string name)
-        {
+        public void registerUser(string name) {
+            try { 
             registering = true;
             socket.BeginSend("connect sysadmin default\n", (e, o) => { }, socket);
             socket.BeginSend("register " + name + "\n", (e, o) => { }, socket);
+            registering = true;
             socket.Close();
             socket = null;
             connected = false;
             Connect(h_name, t_port, u_name, s_name);
-            //socket.BeginReceive(LineReceived, null);
+            }
+            catch(Exception)
+            {
+
+            }
         }
 
         public void closeSocket()
@@ -193,7 +194,7 @@ namespace SSModelNS
                 socket = null;
                 connected = false;
             }
-            catch
+            catch(Exception)
             {
 
             }
