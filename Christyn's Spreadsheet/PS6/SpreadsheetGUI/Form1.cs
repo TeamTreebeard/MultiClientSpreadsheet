@@ -200,9 +200,9 @@ namespace SpreadsheetGUI
             MessageBox.Show("Generic Error: " + error_message);
         }
 
-        private void commandError()
+        private void commandError(string error_message)
         {
-            MessageBox.Show("Invalid Command Error: Client may be dammaged or server no longer accepts the request.");
+            MessageBox.Show("Invalid Command Error: Client may be dammaged or server no longer accepts the request. Request: " + error_message);
         }
 
         /// <summary>

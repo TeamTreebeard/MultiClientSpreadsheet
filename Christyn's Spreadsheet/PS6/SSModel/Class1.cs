@@ -18,7 +18,7 @@ namespace SSModelNS
         public event Action<String, String> updateCellEvent;
         public event Action<String> cellErrorEvent;
         public event Action<String> genericErrorEvent;
-        public event Action commandErrorEvent;
+        public event Action<String> commandErrorEvent;
         public event Action<String> usedNameEvent;
 
         private Boolean registering = false;
@@ -111,7 +111,7 @@ namespace SSModelNS
                     }
                     else if (Convert.ToInt32(info) == 2)
                     {
-                        commandErrorEvent();
+                        commandErrorEvent(s.Substring(8));
                         //thanks for ANOTHER SUPER HELPFUL ERROR - invalid command
                     }
                     else if (Convert.ToInt32(info) == 3)
