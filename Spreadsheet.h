@@ -52,7 +52,9 @@ class Spreadsheet
            to the users
 	*/
 	string undo();
-
+	
+	/*returns true if there is something on the stack to undo*/
+	bool canUndo();
 	/*
 	  Adds a new user to the spreadsheet
 	 */

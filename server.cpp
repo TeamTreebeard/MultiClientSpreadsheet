@@ -297,13 +297,13 @@ void sendAll(int client, string message)
 		else if(command == "undo\n")
 		{
 			cout<<"undoing "<<msg<<endl
-			string test = findSS(client).undo();
-			if(test != "")
-			{
+			if(findSS(client).canUndo()){
+				string test = findSS(client).undo();
 				message = "cell " + test + "\n";
 				cout<<"sending back to client: "<<message<<endl;
 				sendAll(client, message);//how to send out change to all clients
 			}
+
 		}
 		else if(command == "save\n")
 		{

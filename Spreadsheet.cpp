@@ -50,20 +50,21 @@ const Spreadsheet& Spreadsheet::operator= (const Spreadsheet & rhs)
 
 string Spreadsheet::undo()
 {
-  if(undoList.empty())
-  {
-	  undoList.pop();
-	  cell lastChange = undoList.top();
-	  undoList.pop();
-	  cout<<lastChange.name<<" "<<lastChange.content<<" popped off this add"<<endl;
-	  string name = lastChange.name;
-	  string content = lastChange.content;
-	  SetContentsOfCell(name, content, true);
-	  string change = name + " " +  content;
-	  cout<<change<<" removing from undo"<<endl;
-	  return change;
-  }
-  return "";
+  undoList.pop();
+  cell lastChange = undoList.top();
+  undoList.pop();
+  cout<<lastChange.name<<" "<<lastChange.content<<" popped off this"<<endl;
+  string name = lastChange.name;
+  string content = lastChange.content;
+  SetContentsOfCell(name, content, true);
+  string change = name + " " +  content;
+  cout<<change<<" removing from undo"<<endl;
+  return change;
+}
+
+bool Spreadsheet::canUndo()
+{
+	return !undoList.empty();
 }
 
 vector<int> Spreadsheet::getSocketList()
