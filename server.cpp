@@ -124,10 +124,11 @@ void sendAll(int client, string message)
 		cout<<"msg after loop"<<msg<<"something off the end here"<<endl;
 		msg = msg.substr(0, msg.find_first_of("\n")+1);
 		cout<<"msg is set "<<msg<<endl;
-		string command = msg.substr(0, msg.find_first_of(" "));
-		
-		cout<<command<<endl;
-	
+		int index = msg.find_first_of(" ");
+		string command = "";
+		if(index > 0){
+		 command = msg.substr(0, msg.find_first_of(" "));
+		}
 		if(command == "connect")
 		{
 			string username = msg.substr(8, msg.find_first_of(" ", 8));
@@ -312,8 +313,10 @@ void sendAll(int client, string message)
 			cout<<"saved"<<endl;
 		}	
 		
-		else{
-			cout<<"no ifs"<<endl;
+		else
+		{
+			message = "error 2 " + msg + "\n";
+			send(client, message);
 		}
 		// Unlock
 		pthread_mutex_unlock(&serverLock);
