@@ -1,3 +1,13 @@
+/*
+Filename: DependencyGraph.h
+Authors: Brady Mathews, Christyn Phillippi, Kevin Faustino, Brandon Hilton
+Last Modified: 4/25/2015
+
+Header File containing the declarations of Node and DependencyGraph. DependencyGraph contains a mape of Nodes and 
+is used by the server to keep track of dependencies in the Spreadsheet. Each Node contains a list of that
+cells dependent and dependee cells.
+*/
+
 #ifndef DEPENDENCYGRAPH_H
 #define DEPENDENCYGRAPH_H
 

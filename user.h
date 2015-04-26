@@ -1,3 +1,11 @@
+/*
+Filename: user.h
+Authors: Kevin Faustino, Christyn Phillippi, Brady Mathews, Brandon Hilton
+Last Modified: 4/25/2015
+
+Header File containing the declarations for the user class.
+ */
+
 #ifndef DEFINE_USER_H
 #define DEFINE_USER_H
 

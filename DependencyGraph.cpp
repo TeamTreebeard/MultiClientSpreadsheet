@@ -1,3 +1,14 @@
+/*
+Filename: DependencyGraph.cpp
+Authors: Brady Mathews, Christyn Phillippi, Kevin Faustino, Brandon Hilton
+Last Modified: 4/25/2015
+
+C++ File containing the definitions of Node and DependencyGraph. DependencyGraph contains a mape of Nodes and 
+is used by the server to keep track of dependencies in the Spreadsheet. Each Node contains a list of that
+cells dependent and dependee cells.
+*/
+
+
 #include "DependencyGraph.h"
 #include <iostream>
 using namespace std;

@@ -1,7 +1,13 @@
 /*
-http://www.tutorialspoint.com/cplusplus/cpp_multithreading.htm
-http://www.tutorialspoint.com/unix_sockets/socket_server_example.htm
-http://codebase.eu/source/code-cplusplus/multithreaded-socket-server/
+Filename: server.cpp
+Authors: Christyn Phillippi, Brady Mathews, Kevin Faustino, Brandon Hilton
+Last Modified: 4/25/2015
+
+C++ File containing the server used to allow clients to connect to and interact with their spreadsheets.
+Links below are sources used and guides followed to create a server in C++ and implement multithreading in C++:
+(1) http://www.tutorialspoint.com/unix_sockets/socket_server_example.htm
+(2) http://www.tutorialspoint.com/cplusplus/cpp_multithreading.htm
+(3) http://codebase.eu/source/code-cplusplus/multithreaded-socket-server/
  */
  
 #include <iostream>
@@ -22,6 +28,7 @@ using namespace std;
 vector<Spreadsheet> SpreadsheetList;
 vector<string> userList;
 pthread_mutex_t serverLock = PTHREAD_MUTEX_INITIALIZER;
+
 /*
 Returns Spreadsheet that a given socket/client belongs to.
 */
@@ -36,19 +43,19 @@ Spreadsheet& findSS(int client)
 	}
 }
 
+//normalizes a string so all a-z are uppercase.
 string normalize(string content)
 {
-  cout<<" in server "<<content<<endl;
   string change;
   locale loc;
   for(int i = 0; i < content.length(); i++)
   {
 	  change += toupper(content[i],loc);
   }
-  cout<<" normalized "<<change<<endl;
   return change;
 }
 
+//returns true if the given client is associated with a spreadsheet.
 bool hasSS(int client)
 {
 	for(int i=0; i < SpreadsheetList.size(); i++) // loop over all spreadsheets in vector
@@ -61,6 +68,7 @@ bool hasSS(int client)
 	return false;
 }
 
+//returns true if the given filename exists.
 bool fileExists(string filename)
 {
 	string fname = filename+".txt";
@@ -76,12 +84,12 @@ int send(int sockt, string message)
     return 0;
 }
 
+//sends the message given to all sockets that share a spreadsheet with the given one
 void sendAll(int client, string message)
 {
 	vector<int> socketList = findSS(client).getSocketList();
 	for(int i = 0; i < socketList.size(); i++)
 	{
-		cout<<"sending to all "<<socketList[i]<<endl;
 		send(socketList[i], message);
 	}
 }
@@ -98,7 +106,6 @@ void sendAll(int client, string message)
 	
 	while(1) {
 	
-		cout<<"Back inside of while loop"<<endl;
 		// clear buffer
 		bzero(buffer,256);
 		
@@ -108,9 +115,7 @@ void sendAll(int client, string message)
 		if (numBytes <= 0)
         {
 			if(hasSS(client))
-			{
-				cout << "Client Disconnected." << endl ;
-				
+			{				
 				//Find the spreadsheet and save it
 				Spreadsheet * temp = &findSS(client);
 				temp->Save();
@@ -125,7 +130,6 @@ void sendAll(int client, string message)
 						}
 					}
 				}
-				cout << "Done" << endl;
 			}
 			//close socket and end thread for client
             close(client);
@@ -142,17 +146,14 @@ void sendAll(int client, string message)
 		string msg = buffer;
 		string temp = "";
 		string message = "";
-		cout<<"Before loop"<<endl;
 		while((num = msg.find_first_of("\n")) == -1)
 		{
-			cout<<"in loop"<<endl;
 			numBytes = read(client, buffer, 256);
 			temp = buffer;
 			msg += temp;
 		}	
-		cout<<"msg after loop"<<msg<<"something off the end here"<<endl;
+
 		msg = msg.substr(0, msg.find_first_of("\n")+1);
-		cout<<"msg is set "<<msg<<endl;
 		int index = msg.find_first_of(" ");
 		string command = "";
 		if(index > 0){
@@ -218,7 +219,6 @@ void sendAll(int client, string message)
 					continue;
 				}
 				ssname = ssname.substr(0, ssname.length()-1);
-				cout<<ssname<< " spreadsheet name"<<endl;
 				bool found = false;
 				for(int i = 0; i<SpreadsheetList.size(); i++)
 				{
@@ -233,7 +233,6 @@ void sendAll(int client, string message)
 					{
 						if(SpreadsheetList[i].getName() == ssname)
 						{
-							cout<<"are we not getting here?"<<endl;
 							SpreadsheetList[i].addUser(usr);
 							SpreadsheetList[i].Save();
 							map<string, string> sheet = SpreadsheetList[i].getSheet();
@@ -245,14 +244,12 @@ void sendAll(int client, string message)
 							string cells = ss.str();
 							
 							message = "connected " + cells + " \n";
-							cout<<message<< "sheet size"<<endl;
 							send(client, message);
 							
 							//send cells from spreadsheet to client
 							for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
 							{
 								message = "cell " + it->first + " " + it->second + "\n"; 
-								cout << message << " == message" << endl;
 								send(client, message);
 							}
 		
@@ -264,7 +261,6 @@ void sendAll(int client, string message)
 					
 					if(fileExists(ssname))
 					{
-						cout << "The file exists" << endl;
 						Spreadsheet SS(ssname);
 						user usr(username, client);
 						SS.addUser(usr);
@@ -277,14 +273,12 @@ void sendAll(int client, string message)
 						string cells = ss.str();
 						
 						message = "connected " + cells + " \n";
-						cout<<message<<endl;
 						send(client, message);
 						
 						//send cells from spreadsheet to client
 						for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
 						{
 							message = "cell " + it->first + " " + it->second + "\n"; 
-							cout << message << " == message" << endl;
 							send(client, message);
 						}
 					}
@@ -314,16 +308,11 @@ void sendAll(int client, string message)
 		else if(command == "register")
 		{
 			//check if username exists 
-
 			string username = "";
 			username = msg.substr(9);
-			cout<<msg<<"sdkjfsd"<<endl;
-			cout<<username<<"sdsdf"<<endl;
 			index = username.find_first_of("\n");
-			cout<<"index : "<<index<<endl;
 			if(index == 0)
 			{
-				cout<<"inside index "<<endl;
 				message = "error 0 Username not given.\n";
 				send(client, message);
 				pthread_mutex_unlock(&serverLock);
@@ -371,11 +360,9 @@ void sendAll(int client, string message)
 			cellName = normalize(cellName);
 			cellContents = normalize(cellContents);
 			bool circle = findSS(client).SetContentsOfCell(cellName, cellContents, false);//find spreadsheet and call set cell contents
-			cout<<"Message to clients "<<msg<<endl;
 			if(circle)//bad cell change
 			{
 				message = "error 1 Introduced a circular exception\n";//prepare error message
-				cout << message << endl;
 				send(client,message);//send message to cell change requester 
 			}
 			else 
@@ -386,11 +373,9 @@ void sendAll(int client, string message)
 		}
 		else if(command == "undo\n")
 		{
-			cout<<"undoing "<<msg<<endl;
 			if(findSS(client).canUndo()){
 				string test = findSS(client).undo();
 				message = "cell " + test + "\n";
-				cout<<"sending back to client: "<<message<<endl;
 				sendAll(client, message);//how to send out change to all clients
 			}
 		}	
@@ -405,7 +390,7 @@ void sendAll(int client, string message)
  }
  
 /*
- * Server Start and Initialization
+ * Server Start and Initialization - followed the guide/source (1).
  */
 int main(int argc, char *argv[])
 {

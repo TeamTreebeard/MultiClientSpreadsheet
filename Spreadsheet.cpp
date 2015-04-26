@@ -1,3 +1,14 @@
+/*
+Filename: Spreadsheet.h
+Authors: Kevin Faustino, Christyn Phillippi, Brady Mathews, Brandon Hilton
+Last Modified: 4/25/2015
+
+C++ File containing the definitions for the Spreadsheet class. Spreadsheet is used to keep track of cells and contents. It gives functionality
+to remove a cell from the spreadsheet and performs checks to make sure no circular dependecies can occur when adding a new cell or 
+changing the contents of a cell
+ */
+
+
 #include <iostream>
 #include <locale>
 #include <boost/algorithm/string.hpp>
@@ -8,20 +19,23 @@
 
 using namespace std;
 
+//default constructor
 Spreadsheet::Spreadsheet()
 {
-	cout<<"SS DEFAULT CONSTRUCTOR"<<endl;
+
 }
 
+//constructor for spreadsheet which takes the filename given by client
 Spreadsheet::Spreadsheet(string filename)
 {
 	ss_name = filename;
-	cout<<"SS CONSTRUCTOR"<<endl;
+
 }
 
+//default destructor
 Spreadsheet::~Spreadsheet()
 {
-	cout<<"SS DESTRUCTOR"<<endl;
+
 }
 
 /*
@@ -34,9 +48,9 @@ Spreadsheet::Spreadsheet (const Spreadsheet & other)
 	this->undoList = other.undoList;
 	this->userList = other.userList;
 	this->graph = other.graph;
-	cout<<"SS COPY CONSTRUCTOR"<<endl;
 }
 
+//operator= overload for Spreadsheet required by implementing copy constructor
 const Spreadsheet& Spreadsheet::operator= (const Spreadsheet & rhs)
 {
 	this->ss_name = rhs.ss_name;
@@ -44,10 +58,10 @@ const Spreadsheet& Spreadsheet::operator= (const Spreadsheet & rhs)
 	this->undoList = rhs.undoList;
 	this->userList = rhs.userList;
 	this->graph = rhs.graph;
-	cout<<"SS OP="<<endl;
 	return *this;
 }
 
+//undos the previous accepted change to the spreadsheet
 string Spreadsheet::undo()
 {
 	cell lastChange = undoList.top();
@@ -59,11 +73,13 @@ string Spreadsheet::undo()
 	return change;
 }
 
+//returns the bool value true if there is something on the undoList that can be undone.
 bool Spreadsheet::canUndo()
 {
 	return !undoList.empty();
 }
 
+//returns a vector of the client sockets connected to the spreadsheet
 vector<int> Spreadsheet::getSocketList()
 {
 	vector<int> userSockets;
@@ -74,16 +90,19 @@ vector<int> Spreadsheet::getSocketList()
 	return userSockets;
 }
 
+//returns a string the name of the spreadsheet
 string Spreadsheet::getName()
 {
   return ss_name;
 }
 
+//adds a user to the spreadsheet
 void Spreadsheet::addUser(user newUser)
 {
    userList.push_back(newUser);
 }
 
+//returns a bool value true if the spreadsheet contains the given user
 bool Spreadsheet::containsUser(int ID)
 {
     for(vector<user>::iterator it = userList.begin(); it != userList.end(); ++it) 
@@ -110,6 +129,7 @@ void Spreadsheet::removeUser(int socket)
 	}
 }
 
+//returns a string of the contents of a given cell
 string Spreadsheet::GetCellContents(string name)
 {
   for(map<string, string>::iterator it = sheet.begin(); it != sheet.end(); it++)
@@ -120,6 +140,7 @@ string Spreadsheet::GetCellContents(string name)
   return "";
 }
 
+//returns a vector of all of the non-empty cells in the spreadsheet
 vector<string> Spreadsheet::GetNamesOfAllNonemptyCells()
 {
   vector<string> returnVector;
@@ -130,15 +151,15 @@ vector<string> Spreadsheet::GetNamesOfAllNonemptyCells()
   return returnVector;
 }
 
+//returns the map with the cell name and contents for the spreadsheet
 map<string,string> Spreadsheet::getSheet()
 {
-	cout<<"Sheet size in getSheet "<<sheet.size()<<endl;
 	return sheet;
 }
 
+//returns a bool true if the contents were set successfully. Returns false if a circulardependency was found.
 bool Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 {
-  cout<<"Setting contents of Cell"<<endl;
   string copy ="";
   if(isUndo == false)
     {
@@ -166,7 +187,6 @@ bool Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 		}
 		  try
 		{
-			 cout << "CircularCheck(" << name << ")" << endl;
 			 CircularCheck(name);
 			 cell newChange;
 			 newChange.name = name;
@@ -198,6 +218,7 @@ bool Spreadsheet::SetContentsOfCell (string name, string content, bool isUndo)
 	}
 }
 
+//checks if a circular exception would occur by adding the new cell contents
 void Spreadsheet::CircularCheck(string name)
 {
 	vector<string> cell_list;
@@ -205,10 +226,8 @@ void Spreadsheet::CircularCheck(string name)
 	
 	for(int i = 0; i < cell_list.size(); i++)
 	{
-		cout << cell_list[i] << " : Cell List" << endl;
 		if(cell_list[i] == name)
 		{
-			cout << "CircularException Here" << endl;
 			throw CircularException();
 		}
 	}
@@ -216,6 +235,7 @@ void Spreadsheet::CircularCheck(string name)
 	return;
 }
 
+//adds cells to the depend_list
 void Spreadsheet::GetAllDependents(string name, vector<string>& cell_list)
 {
 	vector<string> depend_list;
@@ -233,7 +253,6 @@ void Spreadsheet::GetAllDependents(string name, vector<string>& cell_list)
 		}
 		if(!exists)
 		{
-			cout << depend_list[i] << " : Depend List" << endl;
 			cell_list.push_back(depend_list[i]);
 			GetAllDependents(depend_list[i], cell_list);	
 		}
@@ -241,6 +260,7 @@ void Spreadsheet::GetAllDependents(string name, vector<string>& cell_list)
 	return;
 }
 
+//Saves the spreadsheet and stores it into the file system with the server
 void Spreadsheet::Save()
 {
   ofstream stream;  
@@ -256,6 +276,8 @@ void Spreadsheet::Save()
 	
 }
 
+//opens the spreadsheet and returns a map of all the cell names and contents. 
+//If no spreadsheet with that name exists, creates a new one.
 map<string,string>& Spreadsheet::Open(string filename)
 {
   string fname=filename+".txt";
@@ -271,6 +293,7 @@ map<string,string>& Spreadsheet::Open(string filename)
 	
 }
 
+//returns a vector of all the variables in a content string
 vector<string> Spreadsheet::getVariables(string content)
 {
   vector<string> strs;

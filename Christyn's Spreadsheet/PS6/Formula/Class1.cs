@@ -49,7 +49,7 @@ namespace SpreadsheetUtilities
         /// maps every string to true.  
         /// </summary>
         public Formula(String formula) :
-            this(formula, s => s, s => true)
+            this(formula, s => s, s => Regex.IsMatch(s, "[A-Za-z][1-9][0-9]?"))
         {
             // calls following formula constructor with N = s=>s and V = S => true
         }

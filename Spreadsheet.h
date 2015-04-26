@@ -1,3 +1,11 @@
+/*
+Filename: Spreadsheet.h
+Authors: Kevin Faustino, Christyn Phillippi, Brady Mathews, Brandon Hilton
+Last Modified: 4/25/2015
+
+Header File containing the declarations for the Spreadsheet class.
+ */
+
 #ifndef DEFINE_SPREADSHEET_H
 #define DEFINE_SPREADSHEET_H
 
