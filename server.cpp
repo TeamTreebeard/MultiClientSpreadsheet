@@ -7,7 +7,6 @@ C++ File containing the server used to allow clients to connect to and interact 
 Links below are sources used and guides followed to create a server in C++ and implement multithreading in C++:
 (1) http://www.tutorialspoint.com/unix_sockets/socket_server_example.htm
 (2) http://www.tutorialspoint.com/cplusplus/cpp_multithreading.htm
-(3) http://codebase.eu/source/code-cplusplus/multithreaded-socket-server/
  */
  
 #include <iostream>
